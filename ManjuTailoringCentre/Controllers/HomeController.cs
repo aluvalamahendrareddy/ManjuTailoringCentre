@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ManjuTailoringCentre.Models;
 using ManjuTailoringCentre.Data;
+using ManjuTailoringCentre.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,11 +40,34 @@ namespace ManjuTailoringCentre.Controllers
             return View(services);
         }
 
-        public async Task<IActionResult> Gallery()
+        public async Task<IActionResult> Gallery([FromServices] IImageStorageService storageService)
         {
             var photos = await _db.GalleryPhotos
                 .OrderByDescending(p => p.UploadedAt)
                 .ToListAsync();
+
+            // Auto-recovery: If local database was restarted/cleared, recover uploaded photos from Cloudinary!
+            if (!photos.Any())
+            {
+                var cloudPhotos = await storageService.FetchAllImagesFromCloudinaryAsync();
+                if (cloudPhotos.Any())
+                {
+                    foreach (var cp in cloudPhotos)
+                    {
+                        _db.GalleryPhotos.Add(new GalleryPhoto
+                        {
+                            Title = "Designer Wear",
+                            Category = "Designer Blouse",
+                            ImageUrl = cp.ImageUrl,
+                            CloudinaryPublicId = cp.PublicId,
+                            UploadedAt = DateTime.UtcNow
+                        });
+                    }
+                    await _db.SaveChangesAsync();
+                    photos = await _db.GalleryPhotos.OrderByDescending(p => p.UploadedAt).ToListAsync();
+                }
+            }
+
             return View(photos);
         }
 
@@ -69,9 +93,21 @@ namespace ManjuTailoringCentre.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? statusCode = null)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var code = statusCode ?? HttpContext.Response.StatusCode;
+            if (code == 200) code = 404; // Default fallback if reached via 404 re-execute
+
+            var model = new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                StatusCode = code,
+                Message = code == 404
+                    ? "Oops! The page, design, or link you are looking for doesn't exist or was moved."
+                    : "An unexpected error occurred while processing your request. Please try again or return home."
+            };
+
+            return View(model);
         }
 
         private List<ServiceViewModel> GetServices()

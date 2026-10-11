@@ -94,5 +94,35 @@ namespace ManjuTailoringCentre.Services
                 await Task.CompletedTask;
             }
         }
+
+        public async Task<List<(string ImageUrl, string PublicId, string Category)>> FetchAllImagesFromCloudinaryAsync()
+        {
+            var list = new List<(string ImageUrl, string PublicId, string Category)>();
+            if (_useCloudinary && _cloudinary != null)
+            {
+                try
+                {
+                    var result = await _cloudinary.ListResourcesAsync(new ListResourcesByPrefixParams
+                    {
+                        Type = "upload",
+                        Prefix = "manju-tailoring/gallery",
+                        MaxResults = 500
+                    });
+
+                    if (result.Resources != null)
+                    {
+                        foreach (var res in result.Resources)
+                        {
+                            list.Add((res.SecureUrl.ToString(), res.PublicId, "General"));
+                        }
+                    }
+                }
+                catch
+                {
+                    // Ignore if error querying API
+                }
+            }
+            return list;
+        }
     }
 }

@@ -68,12 +68,41 @@ namespace ManjuTailoringCentre.Controllers
             return RedirectToAction("Login");
         }
 
+        // ─── ADMIN ROOT ROUTE (/Admin) ─────────────────────────────────────────
         [AdminOnly]
-        public async Task<IActionResult> Dashboard([FromServices] IWebHostEnvironment env)
+        public IActionResult Index()
+        {
+            return RedirectToAction("Dashboard");
+        }
+
+        [AdminOnly]
+        public async Task<IActionResult> Dashboard([FromServices] IWebHostEnvironment env, [FromServices] IImageStorageService storageService)
         {
             var photos = await _db.GalleryPhotos
                 .OrderByDescending(p => p.UploadedAt)
                 .ToListAsync();
+
+            // Auto-recovery from Cloudinary if empty on server start
+            if (!photos.Any())
+            {
+                var cloudPhotos = await storageService.FetchAllImagesFromCloudinaryAsync();
+                if (cloudPhotos.Any())
+                {
+                    foreach (var cp in cloudPhotos)
+                    {
+                        _db.GalleryPhotos.Add(new GalleryPhoto
+                        {
+                            Title = "Designer Wear",
+                            Category = "Designer Blouse",
+                            ImageUrl = cp.ImageUrl,
+                            CloudinaryPublicId = cp.PublicId,
+                            UploadedAt = DateTime.UtcNow
+                        });
+                    }
+                    await _db.SaveChangesAsync();
+                    photos = await _db.GalleryPhotos.OrderByDescending(p => p.UploadedAt).ToListAsync();
+                }
+            }
 
             // Seed default categories if none exist yet
             if (!await _db.Categories.AnyAsync())
