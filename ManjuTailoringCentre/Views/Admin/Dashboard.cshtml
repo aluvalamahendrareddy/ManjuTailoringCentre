@@ -3,7 +3,7 @@
     ViewData["Title"] = "Admin Dashboard";
     Layout = null;
     var categoriesList = ViewBag.CategoriesList as List<ManjuTailoringCentre.Models.CategoryItem> ?? new List<ManjuTailoringCentre.Models.CategoryItem>();
-    var categoryNames = categoriesList.Select(c => c.Name).ToList();
+    var categoryNames = categoriesList.Select(c => c.Name.Trim()).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -32,22 +32,105 @@
         .photo-thumb-wrap { position: relative; aspect-ratio: 1; overflow: hidden; background: #eee; }
         .photo-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .photo-item:hover .photo-thumb-wrap img { transform: scale(1.05); }
-        .delete-btn { position: absolute; top: 10px; right: 10px; background: #e53935; border: 2px solid white; color: white; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s, background 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.35); z-index: 5; opacity: 1; }
+        .delete-btn { position: absolute; top: 8px; right: 8px; background: #e53935; border: 2px solid white; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s, background 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.35); z-index: 5; font-size: 13px; }
         .delete-btn:hover { background: #b71c1c; transform: scale(1.15); }
-        .photo-details { padding: 0.75rem; background: white; }
+        .photo-details { padding: 0.6rem 0.5rem; background: white; }
+        
+        /* Compact, non-trimmed category dropdown */
+        .category-select-admin {
+            font-size: 0.76rem !important;
+            padding: 0.22rem 1.4rem 0.22rem 0.45rem !important;
+            height: 30px !important;
+            border-radius: 50px !important;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            border-color: #f8bbd0 !important;
+            background-color: #fff9fa !important;
+            color: #333 !important;
+            font-weight: 500;
+        }
+
         .preview-thumb-wrap { position: relative; display: inline-block; margin: 4px; }
         .preview-thumb { width: 85px; height: 85px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.15); display: block; }
         .preview-remove-btn { position: absolute; top: -8px; right: -8px; background: #e53935; border: 2px solid white; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
         .preview-remove-btn:hover { background: #b71c1c; transform: scale(1.2); }
+
+        /* Admin Mobile Bottom Navigation */
+        .admin-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            padding-top: 4px;
+            padding-bottom: max(env(safe-area-inset-bottom, 0px), 4px);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(194, 24, 91, 0.15);
+            box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-around;
+            z-index: 1040;
+        }
+        .admin-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: #666;
+            text-decoration: none;
+            padding: 2px 4px;
+            flex: 1;
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+        .admin-nav-item i { font-size: 1.15rem; line-height: 1; margin-bottom: 2px; }
+        .admin-nav-item span { line-height: 1; }
+        .admin-nav-item.active { color: var(--primary) !important; font-weight: 700; }
+        .admin-nav-item:hover { color: var(--primary); }
+
         @@media (max-width: 768px) {
-            .sidebar { width: 100%; min-height: auto; position: relative; }
-            .main-content { margin-left: 0; padding: 1rem; }
+            .sidebar { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0.75rem 0.5rem 75px !important; }
+
+            /* 3 images per row on mobile in Admin Gallery */
+            .photo-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 0.4rem !important;
+            }
+            .photo-item {
+                border-radius: 8px !important;
+            }
+            .photo-details {
+                padding: 0.25rem 0.2rem !important;
+            }
+            .category-select-admin {
+                font-size: 0.63rem !important;
+                padding: 0.15rem 1rem 0.15rem 0.2rem !important;
+                height: 24px !important;
+            }
+            .photo-details small {
+                display: none !important;
+            }
+            .delete-btn {
+                width: 22px !important;
+                height: 22px !important;
+                top: 4px !important;
+                right: 4px !important;
+                font-size: 10px !important;
+            }
+            .stat-card {
+                padding: 1rem !important;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
+    <!-- Desktop Sidebar -->
+    <div class="sidebar d-none d-md-block">
         <div class="brand">
             <i class="bi bi-scissors me-2"></i>MLTC Admin
         </div>
@@ -61,33 +144,35 @@
         </form>
     </div>
 
+    <!-- Mobile Top Header -->
+    <div class="d-md-none d-flex justify-content-between align-items-center px-3 py-2" style="background: var(--primary); color: white;">
+        <span class="fw-bold fs-6"><i class="bi bi-scissors me-2"></i>MLTC Admin</span>
+        <a href="/Admin/Categories" class="btn btn-sm btn-light rounded-pill px-3 py-1" style="color: var(--primary); font-size: 0.75rem; font-weight: 600;">
+            <i class="bi bi-tags me-1"></i>Categories
+        </a>
+    </div>
+
     <!-- Main Content -->
     <div class="main-content">
 
         <!-- Stats Row -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <h3 class="fw-bold" style="color: var(--primary);">@Model.Count</h3>
-                    <p class="mb-0 text-muted">Total Photos in Gallery</p>
+        <div class="row g-2 g-md-3 mb-3 mb-md-4">
+            <div class="col-4 col-md-4">
+                <div class="stat-card p-2 p-md-3 text-center text-md-start">
+                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.2rem, 4vw, 1.8rem);">@Model.Count</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Total Photos</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <h3 class="fw-bold" style="color: var(--primary);">@categoriesList.Count</h3>
-                    <p class="mb-0 text-muted">Available Categories</p>
+            <div class="col-4 col-md-4">
+                <div class="stat-card p-2 p-md-3 text-center text-md-start">
+                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.2rem, 4vw, 1.8rem);">@categoryNames.Count</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Categories</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <h3 class="fw-bold mb-0" style="color: var(--accent);">@(ViewBag.StorageUsedMB ?? 0) MB</h3>
-                        <span class="badge bg-light text-muted border">of 25 GB Cloud Storage</span>
-                    </div>
-                    <div class="progress mt-2" style="height: 6px;">
-                        <div class="progress-bar" role="progressbar" style="width: @(ViewBag.StoragePercentage ?? 0)%; background: var(--primary);"></div>
-                    </div>
-                    <small class="text-muted mt-1 d-block">Used: @(ViewBag.StoragePercentage ?? 0)% of 25,000 MB Cloudinary storage</small>
+            <div class="col-4 col-md-4">
+                <div class="stat-card p-2 p-md-3 text-center text-md-start">
+                    <h3 class="fw-bold mb-0" style="color: var(--accent); font-size: clamp(1.2rem, 4vw, 1.8rem);">@(ViewBag.StorageUsedMB ?? 0) MB</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Used of 25 GB</p>
                 </div>
             </div>
         </div>
@@ -95,47 +180,47 @@
         <!-- Alerts -->
         @if (TempData["Success"] != null)
         {
-            <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4">
+            <div class="alert alert-success alert-dismissible fade show rounded-3 mb-3 py-2">
                 <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
         @if (TempData["Error"] != null)
         {
-            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4">
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-3 py-2">
                 <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         }
 
         <!-- Upload Section (Compact & Intuitive) -->
-        <div class="card border-0 rounded-4 shadow-sm mb-4" style="overflow: hidden;">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background: var(--primary); color: white;">
-                <h5 class="mb-0 fw-bold"><i class="bi bi-cloud-upload me-2"></i>Upload Design Photos</h5>
-                <a href="/admin/categories" class="btn btn-sm btn-light rounded-pill px-3 fw-bold" style="color: var(--primary);">
+        <div class="card border-0 rounded-4 shadow-sm mb-3 mb-md-4" style="overflow: hidden;">
+            <div class="card-header py-2 py-md-3 d-flex justify-content-between align-items-center" style="background: var(--primary); color: white;">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-cloud-upload me-2"></i>Upload Design Photos</h6>
+                <a href="/admin/categories" class="btn btn-sm btn-light rounded-pill px-3 fw-bold d-none d-md-inline-block" style="color: var(--primary); font-size: 0.8rem;">
                     <i class="bi bi-tags me-1"></i>Manage Categories
                 </a>
             </div>
-            <div class="card-body p-4">
+            <div class="card-body p-3 p-md-4">
                 <form method="post" asp-action="Upload" enctype="multipart/form-data" id="uploadForm">
-                    <div class="row g-3 align-items-center">
-                        <div class="col-md-4 col-lg-3">
-                            <label class="form-label fw-bold mb-1">1. Choose Category</label>
-                            <select name="category" class="form-select rounded-pill px-3">
+                    <div class="row g-2 g-md-3 align-items-center">
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <label class="form-label fw-bold mb-1 small">1. Choose Category</label>
+                            <select name="category" class="form-select rounded-pill px-3" style="font-size: 0.88rem;">
                                 @foreach (var cat in categoryNames)
                                 {
                                     <option value="@cat">@cat</option>
                                 }
                             </select>
                         </div>
-                        <div class="col-md-8 col-lg-6">
-                            <label class="form-label fw-bold mb-1">2. Select Photos (Up to 20 at once)</label>
-                            <input type="file" name="photos" id="photosInput" class="form-control rounded-pill px-3"
+                        <div class="col-12 col-md-8 col-lg-6">
+                            <label class="form-label fw-bold mb-1 small">2. Select Photos (Up to 20 at once)</label>
+                            <input type="file" name="photos" id="photosInput" class="form-control rounded-pill px-3" style="font-size: 0.88rem;"
                                    accept="image/jpeg,image/jpg,image/png,image/webp" multiple required />
                         </div>
-                        <div class="col-lg-3 text-lg-end pt-lg-4">
-                            <button type="submit" class="btn btn-lg rounded-pill px-4 text-white w-100 w-lg-auto"
-                                    style="background: var(--primary); font-weight: 600;">
+                        <div class="col-12 col-lg-3 text-lg-end pt-lg-4">
+                            <button type="submit" class="btn rounded-pill px-4 text-white w-100"
+                                    style="background: var(--primary); font-weight: 600; font-size: 0.9rem;">
                                 <i class="bi bi-cloud-arrow-up-fill me-2"></i>Upload Photos
                             </button>
                         </div>
@@ -149,21 +234,21 @@
             </div>
         </div>
 
-        <!-- Category Filter Tabs for Admin (Easy filtering to view and delete photos) -->
+        <!-- Category Filter Tabs for Admin -->
         <div class="card border-0 shadow-sm rounded-4 mb-3" style="background: #ffffff;">
-            <div class="card-body p-3">
-                <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="text-muted small fw-bold me-2"><i class="bi bi-funnel-fill me-1" style="color: var(--primary);"></i>Filter Photos:</span>
-                    <button type="button" class="btn btn-sm rounded-pill px-3 admin-filter-btn active-filter"
-                            style="background: var(--primary); color: white; border: none; font-weight: 600;"
+            <div class="card-body p-2 p-md-3">
+                <div class="d-flex flex-wrap gap-1 gap-md-2 align-items-center">
+                    <span class="text-muted small fw-bold me-1"><i class="bi bi-funnel-fill me-1" style="color: var(--primary);"></i>Filter:</span>
+                    <button type="button" class="btn btn-sm rounded-pill px-2 px-md-3 admin-filter-btn active-filter"
+                            style="background: var(--primary); color: white; border: none; font-weight: 600; font-size: 0.78rem;"
                             onclick="filterAdminGallery('all', this)">
                         All (@Model.Count)
                     </button>
                     @foreach (var cat in categoryNames)
                     {
                         var catCount = Model.Count(p => p.Category == cat);
-                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 admin-filter-btn"
-                                style="font-weight: 500;"
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 px-md-3 admin-filter-btn"
+                                style="font-weight: 500; font-size: 0.78rem;"
                                 onclick="filterAdminGallery('@cat', this)">
                             @cat (@catCount)
                         </button>
@@ -173,9 +258,9 @@
         </div>
 
         <!-- Gallery Grid with In-Place Category Editing -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0 fw-bold" id="adminGalleryHeader"><i class="bi bi-images me-2"></i>Gallery Photos (@Model.Count)</h5>
-            <small class="text-muted">Tip: Change the dropdown below any photo to reassign or move it</small>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0 fw-bold" id="adminGalleryHeader"><i class="bi bi-images me-1"></i>Gallery Photos (@Model.Count)</h6>
+            <small class="text-muted small d-none d-md-block">Tip: Change the dropdown below any photo to reassign or move it</small>
         </div>
 
         @if (!Model.Any())
@@ -187,6 +272,7 @@
         }
         else
         {
+            <!-- Photo Grid: 3 images per row on mobile, auto-fill on desktop -->
             <div class="photo-grid" id="adminPhotoGrid">
                 @foreach (var photo in Model)
                 {
@@ -202,16 +288,16 @@
                             </form>
                         </div>
                         <div class="photo-details">
-                            <form method="post" asp-action="UpdatePhotoCategory" class="d-flex gap-1 align-items-center">
+                            <form method="post" asp-action="UpdatePhotoCategory" class="d-flex align-items-center m-0">
                                 <input type="hidden" name="photoId" value="@photo.Id" />
-                                <select name="newCategory" class="form-select form-select-sm rounded-pill" onchange="this.form.submit()" title="Change Category">
+                                <select name="newCategory" class="form-select form-select-sm category-select-admin w-100" onchange="this.form.submit()" title="Change Category">
                                     @foreach (var cat in categoryNames)
                                     {
                                         <option value="@cat" selected="@(photo.Category == cat ? "selected" : null)">@cat</option>
                                     }
                                 </select>
                             </form>
-                            <small class="text-muted d-block text-center mt-1" style="font-size: 11px;">Select above to move</small>
+                            <small class="text-muted d-block text-center mt-1" style="font-size: 10px;">Select to move</small>
                         </div>
                     </div>
                 }
@@ -219,8 +305,52 @@
         }
     </div>
 
+    <!-- Mobile Admin Bottom Navigation Bar -->
+    <nav class="admin-bottom-nav d-md-none">
+        <a href="/Admin/Dashboard" class="admin-nav-item active">
+            <i class="bi bi-images"></i>
+            <span>Gallery</span>
+        </a>
+        <a href="/Admin/Categories" class="admin-nav-item">
+            <i class="bi bi-tags"></i>
+            <span>Categories</span>
+        </a>
+        <a href="/" target="_blank" class="admin-nav-item">
+            <i class="bi bi-globe"></i>
+            <span>Website</span>
+        </a>
+        <form method="post" asp-action="Logout" class="admin-nav-item p-0 m-0" style="background:none; border:none;">
+            <button type="submit" class="admin-nav-item w-100 h-100 p-0 m-0" style="background:none; border:none; color: inherit;">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </button>
+        </form>
+    </nav>
+    <!-- Toast Notification for Feedback -->
+    @if (TempData["Success"] != null || TempData["Error"] != null)
+    {
+        <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3 mb-5 mb-md-3" style="z-index: 1090;">
+            <div id="adminToast" class="toast align-items-center text-white @(TempData["Success"] != null ? "bg-success" : "bg-danger") border-0 rounded-pill px-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold py-2">
+                        <i class="bi @(TempData["Success"] != null ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill") me-2"></i>
+                        @(TempData["Success"] ?? TempData["Error"])
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastEl = document.getElementById('adminToast');
+            if (toastEl) {
+                const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+                toast.show();
+            }
+        });
         // Track selected files with DataTransfer so user can remove individual files with (X)
         let dt = new DataTransfer();
         const fileInput = document.getElementById('photosInput');
@@ -229,7 +359,6 @@
         const countLabel = document.getElementById('preview-count');
 
         fileInput.addEventListener('change', function (e) {
-            // Append newly picked files
             const newFiles = Array.from(this.files);
             
             if (dt.items.length + newFiles.length > 20) {
@@ -244,84 +373,78 @@
 
         function renderPreviews() {
             grid.innerHTML = '';
-            const files = Array.from(dt.files);
-
-            if (files.length === 0) {
+            if (dt.items.length === 0) {
                 container.style.display = 'none';
                 return;
             }
 
             container.style.display = 'block';
-            countLabel.textContent = `${files.length} photo(s) selected (Click ✖ on any photo to remove)`;
+            countLabel.textContent = `${dt.items.length} photo(s) selected for upload:`;
 
-            files.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function (ev) {
-                    const wrap = document.createElement('div');
-                    wrap.className = 'preview-thumb-wrap';
+            Array.from(dt.files).forEach((file, index) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'preview-thumb-wrap';
 
-                    const img = document.createElement('img');
-                    img.src = ev.target.result;
-                    img.className = 'preview-thumb';
+                const img = document.createElement('img');
+                img.className = 'preview-thumb';
+                img.src = URL.createObjectURL(file);
 
-                    const removeBtn = document.createElement('button');
-                    removeBtn.type = 'button';
-                    removeBtn.className = 'preview-remove-btn';
-                    removeBtn.innerHTML = '✖';
-                    removeBtn.title = 'Remove this photo';
-                    removeBtn.onclick = function () {
-                        removeFileAtIndex(index);
-                    };
-
-                    wrap.appendChild(img);
-                    wrap.appendChild(removeBtn);
-                    grid.appendChild(wrap);
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'preview-remove-btn';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button';
+                removeBtn.title = 'Remove this photo';
+                removeBtn.onclick = function () {
+                    removeFile(index);
                 };
-                reader.readAsDataURL(file);
+
+                wrap.appendChild(img);
+                wrap.appendChild(removeBtn);
+                grid.appendChild(wrap);
             });
         }
 
-        function removeFileAtIndex(index) {
+        function removeFile(index) {
             const newDt = new DataTransfer();
-            const currentFiles = Array.from(dt.files);
-            currentFiles.forEach((file, i) => {
-                if (i !== index) {
-                    newDt.items.add(file);
-                }
+            Array.from(dt.files).forEach((f, i) => {
+                if (i !== index) newDt.items.add(f);
             });
             dt = newDt;
             fileInput.files = dt.files;
             renderPreviews();
         }
 
-        // Admin Gallery Filtering (Filters photos by category immediately)
-        function filterAdminGallery(category, btn) {
-            document.querySelectorAll('.admin-filter-btn').forEach(b => {
-                b.classList.remove('active-filter');
-                b.style.background = '';
-                b.style.color = '';
-                b.classList.add('btn-outline-secondary');
+        // Filter Photos for Admin
+        function filterAdminGallery(category, button) {
+            document.querySelectorAll('.admin-filter-btn').forEach(btn => {
+                btn.classList.remove('active-filter');
+                btn.style.background = '';
+                btn.style.color = '';
+                btn.classList.add('btn-outline-secondary');
             });
-            btn.classList.add('active-filter');
-            btn.classList.remove('btn-outline-secondary');
-            btn.style.background = 'var(--primary)';
-            btn.style.color = 'white';
 
-            let visible = 0;
-            document.querySelectorAll('.photo-item').forEach(item => {
-                if (category === 'all' || item.dataset.category === category) {
-                    item.style.display = '';
-                    visible++;
+            button.classList.add('active-filter');
+            button.classList.remove('btn-outline-secondary');
+            button.style.background = 'var(--primary)';
+            button.style.color = 'white';
+
+            const items = document.querySelectorAll('#adminPhotoGrid .photo-item');
+            let visibleCount = 0;
+            items.forEach(item => {
+                const itemCat = item.getAttribute('data-category');
+                if (category === 'all' || itemCat === category) {
+                    item.style.display = 'block';
+                    visibleCount++;
                 } else {
                     item.style.display = 'none';
                 }
             });
 
             const header = document.getElementById('adminGalleryHeader');
-            if (header) {
-                header.innerHTML = category === 'all' 
-                    ? `<i class="bi bi-images me-2"></i>Gallery Photos (${visible})` 
-                    : `<i class="bi bi-images me-2"></i>${category} (${visible} photos)`;
+            if (category === 'all') {
+                header.innerHTML = `<i class="bi bi-images me-1"></i>Gallery Photos (${visibleCount})`;
+            } else {
+                header.innerHTML = `<i class="bi bi-images me-1"></i>${category} (${visibleCount})`;
             }
         }
     </script>

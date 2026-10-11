@@ -38,10 +38,11 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 
+    var defaults = new[] { "Designer Blouse", "Normal Blouse", "Crop Top", "Kids Frocks & Dresses", "Saree kongu mudulu", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
+
     // 1. Seed Categories if empty
     if (!db.Categories.Any())
     {
-        var defaults = new[] { "Designer Blouse", "Normal Blouse", "Kids Frocks & Dresses", "Saree Kongu Muddillu", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
         foreach (var d in defaults)
         {
             db.Categories.Add(new CategoryItem { Name = d });
@@ -59,10 +60,15 @@ using (var scope = app.Services.CreateScope())
             var cloudPhotos = storage.FetchAllImagesFromCloudinaryAsync().GetAwaiter().GetResult();
             if (cloudPhotos != null && cloudPhotos.Count > 0)
             {
+                var knownCategories = new HashSet<string>(db.Categories.Select(c => c.Name), StringComparer.OrdinalIgnoreCase);
                 foreach (var cp in cloudPhotos)
                 {
-                    var cat = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse";
-                    if (cat == "Pattu Langa / Half Saree") cat = "Saree Kongu Muddillu";
+                    var cat = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category.Trim() : "Designer Blouse";
+                    if (cat.Equals("Pattu Langa / Half Saree", StringComparison.OrdinalIgnoreCase) || 
+                        cat.Equals("Saree Kongu Muddillu", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cat = "Saree kongu mudulu";
+                    }
 
                     db.GalleryPhotos.Add(new GalleryPhoto
                     {
@@ -73,7 +79,7 @@ using (var scope = app.Services.CreateScope())
                         UploadedAt = DateTime.UtcNow
                     });
 
-                    if (!db.Categories.Any(c => c.Name == cat))
+                    if (knownCategories.Add(cat))
                     {
                         db.Categories.Add(new CategoryItem { Name = cat });
                     }
@@ -97,11 +103,15 @@ using (var scope = app.Services.CreateScope())
                     {
                         foreach (var it in items)
                         {
-                            var cat = it.Category == "Pattu Langa / Half Saree" ? "Saree Kongu Muddillu" : it.Category;
-                            var title = it.Title == "Pattu Langa / Half Saree" ? "Saree Kongu Muddillu" : it.Title;
+                            var cat = it.Category;
+                            if (cat.Equals("Pattu Langa / Half Saree", StringComparison.OrdinalIgnoreCase) || 
+                                cat.Equals("Saree Kongu Muddillu", StringComparison.OrdinalIgnoreCase))
+                            {
+                                cat = "Saree kongu mudulu";
+                            }
                             db.GalleryPhotos.Add(new GalleryPhoto
                             {
-                                Title = title,
+                                Title = cat,
                                 Category = cat,
                                 ImageUrl = it.ImageUrl,
                                 CloudinaryPublicId = it.PublicId,
@@ -116,30 +126,60 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // 3. Migrate any existing photos/categories with the old name
-    var oldCatPhotos = db.GalleryPhotos.Where(p => p.Category == "Pattu Langa / Half Saree").ToList();
-    if (oldCatPhotos.Any())
+    // 3. Migrate any existing photos with old category names
+    var photosToMigrate = db.GalleryPhotos
+        .Where(p => p.Category == "Pattu Langa / Half Saree" || p.Category == "Saree Kongu Muddillu")
+        .ToList();
+    if (photosToMigrate.Any())
     {
-        foreach (var p in oldCatPhotos)
+        foreach (var p in photosToMigrate)
         {
-            p.Category = "Saree Kongu Muddillu";
-            p.Title = "Saree Kongu Muddillu";
+            p.Category = "Saree kongu mudulu";
+            p.Title = "Saree kongu mudulu";
         }
         db.SaveChanges();
     }
-    var oldCategoryItem = db.Categories.FirstOrDefault(c => c.Name == "Pattu Langa / Half Saree");
-    if (oldCategoryItem != null)
+
+    // 4. De-duplicate Categories table and ensure Crop Top & Saree kongu mudulu exist
+    var allCats = db.Categories.ToList();
+    var seenCatNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    var duplicateCats = new List<CategoryItem>();
+    foreach (var c in allCats)
     {
-        oldCategoryItem.Name = "Saree Kongu Muddillu";
-        db.SaveChanges();
+        var trimmed = c.Name.Trim();
+        c.Name = trimmed;
+        // Merge old variations
+        if (trimmed.Equals("Pattu Langa / Half Saree", StringComparison.OrdinalIgnoreCase) || 
+            trimmed.Equals("Saree Kongu Muddillu", StringComparison.OrdinalIgnoreCase))
+        {
+            c.Name = "Saree kongu mudulu";
+            trimmed = "Saree kongu mudulu";
+        }
+
+        if (!seenCatNames.Add(trimmed))
+        {
+            duplicateCats.Add(c);
+        }
     }
-    if (!db.Categories.Any(c => c.Name == "Saree Kongu Muddillu"))
+    if (duplicateCats.Any())
     {
-        db.Categories.Add(new CategoryItem { Name = "Saree Kongu Muddillu" });
+        db.Categories.RemoveRange(duplicateCats);
         db.SaveChanges();
     }
 
-    // 4. Ensure Cloudinary tags for saree images are updated
+    // Ensure required core categories exist
+    if (!seenCatNames.Contains("Crop Top"))
+    {
+        db.Categories.Add(new CategoryItem { Name = "Crop Top" });
+        db.SaveChanges();
+    }
+    if (!seenCatNames.Contains("Saree kongu mudulu"))
+    {
+        db.Categories.Add(new CategoryItem { Name = "Saree kongu mudulu" });
+        db.SaveChanges();
+    }
+
+    // 5. Ensure Cloudinary tags for saree images are updated
     _ = Task.Run(async () =>
     {
         try
@@ -158,7 +198,7 @@ using (var scope = app.Services.CreateScope())
             };
             foreach (var pid in sareePids)
             {
-                await storage.UpdateImageCategoryAsync(pid, "Saree Kongu Muddillu");
+                await storage.UpdateImageCategoryAsync(pid, "Saree kongu mudulu");
             }
         }
         catch { }

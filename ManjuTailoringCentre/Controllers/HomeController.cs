@@ -55,7 +55,11 @@ namespace ManjuTailoringCentre.Controllers
                     foreach (var cp in cloudPhotos)
                     {
                         var cat = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse";
-                        if (cat == "Pattu Langa / Half Saree") cat = "Saree Kongu Muddillu";
+                        if (cat.Equals("Pattu Langa / Half Saree", StringComparison.OrdinalIgnoreCase) || 
+                            cat.Equals("Saree Kongu Muddillu", StringComparison.OrdinalIgnoreCase))
+                        {
+                            cat = "Saree kongu mudulu";
+                        }
 
                         _db.GalleryPhotos.Add(new GalleryPhoto
                         {

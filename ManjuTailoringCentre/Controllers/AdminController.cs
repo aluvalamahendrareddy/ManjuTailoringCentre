@@ -110,7 +110,7 @@ namespace ManjuTailoringCentre.Controllers
             // Seed default categories if none exist yet
             if (!await _db.Categories.AnyAsync())
             {
-                var defaults = new[] { "Designer Blouse", "Normal Blouse", "Kids Frocks & Dresses", "Saree Kongu Muddillu", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
+                var defaults = new[] { "Designer Blouse", "Normal Blouse", "Crop Top", "Kids Frocks & Dresses", "Saree kongu mudulu", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
                 foreach (var d in defaults)
                 {
                     _db.Categories.Add(new CategoryItem { Name = d });
@@ -119,7 +119,7 @@ namespace ManjuTailoringCentre.Controllers
             }
 
             var categories = await _db.Categories.OrderBy(c => c.Name).ToListAsync();
-            ViewBag.CategoriesList = categories;
+            ViewBag.CategoriesList = categories.GroupBy(c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase).Select(g => g.First()).ToList();
 
             // Calculate storage used on disk in wwwroot/uploads
             long totalBytes = 0;
@@ -246,7 +246,8 @@ namespace ManjuTailoringCentre.Controllers
         [HttpGet]
         public async Task<IActionResult> Categories()
         {
-            var categories = await _db.Categories.OrderBy(c => c.Name).ToListAsync();
+            var rawCategories = await _db.Categories.OrderBy(c => c.Name).ToListAsync();
+            var categories = rawCategories.GroupBy(c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase).Select(g => g.First()).ToList();
             // Count photos per category
             var counts = await _db.GalleryPhotos
                 .GroupBy(p => p.Category)
