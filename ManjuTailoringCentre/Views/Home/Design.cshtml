@@ -1,0 +1,77 @@
+@model ManjuTailoringCentre.Models.DesignPreviewViewModel
+@{
+    ViewData["Title"] = $"{Model.Category} - Manju Ladies Tailoring";
+    var pageUrl = $"https://manjuladiestailoringcentre.onrender.com/Home/Design?img={Uri.EscapeDataString(Model.ImageUrl)}&cat={Uri.EscapeDataString(Model.Category)}";
+    var waOrderMsg = $"Hello Manju Ladies Tailoring, I saw this {Model.Category} design and want to order it: {pageUrl}";
+    var waOrderUrl = $"https://wa.me/919652848029?text={Uri.EscapeDataString(waOrderMsg)}";
+}
+
+<!-- Custom Open Graph Tags for WhatsApp Card Generation -->
+@section Scripts {
+    <script>
+        // If loaded in a browser, enhance the Order button with native share if possible
+        async function orderFromPage() {
+            const imgUrl = '@Model.ImageUrl';
+            const cat = '@Model.Category';
+            const shopPhone = '919652848029';
+            const directUrl = window.location.href;
+            const msg = `Hello Manju Ladies Tailoring, I saw this ${cat} design and want to order it!\n\nLink: ${directUrl}`;
+
+            if (navigator.share) {
+                try {
+                    const res = await fetch(imgUrl, { mode: 'cors' });
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        const file = new File([blob], `${cat.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`, { type: blob.type || 'image/jpeg' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share({
+                                files: [file],
+                                title: `${cat} - Manju Tailoring`,
+                                text: `Send to Manju Ladies Tailoring (+91 9652848029):\n${msg}`
+                            });
+                            return;
+                        }
+                    }
+                } catch (e) {}
+            }
+            window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+    </script>
+}
+
+<div class="container py-4 py-md-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <span class="gallery-cat-pill">
+                        <i class="bi bi-tag-fill me-1" style="color: var(--primary-color);"></i>@Model.Category
+                    </span>
+                    <a href="/Home/Gallery" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i>All Designs
+                    </a>
+                </div>
+
+                <div class="text-center bg-light p-3">
+                    <img src="@Model.ImageUrl" alt="@Model.Category" class="img-fluid rounded-3 shadow-sm" style="max-height: 70vh; object-fit: contain; width: auto;" />
+                </div>
+
+                <div class="card-body p-4 text-center">
+                    <h3 class="fw-bold mb-2" style="color: var(--primary-color);">@Model.Category</h3>
+                    <p class="text-muted small mb-4">
+                        Custom hand-crafted tailoring by Shankaramma Garu &bull; Gandhi Chowk, Gadwal &bull; Perfect fitting guaranteed
+                    </p>
+
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <button type="button" onclick="orderFromPage()" class="btn btn-success btn-lg rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-whatsapp me-2"></i>Order on WhatsApp
+                        </button>
+                        <a href="/Home/Gallery" class="btn btn-outline-danger btn-lg rounded-pill px-4 py-2" style="border-color: var(--primary-color); color: var(--primary-color);">
+                            <i class="bi bi-images me-2"></i>Browse More Designs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

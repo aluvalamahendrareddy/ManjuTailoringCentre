@@ -98,10 +98,10 @@
                 <img id="modalImage" src="" alt="Full Design Preview" class="img-fluid rounded-3" style="max-height: 70vh; width: auto; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />
             </div>
             <div class="modal-footer border-0 pt-0 pb-4 justify-content-center gap-3">
-                <!-- 1. Send / Order directly to Shop WhatsApp with Photo link -->
-                <a id="modalWhatsAppBtn" href="#" target="_blank" class="btn btn-success btn-lg rounded-pill px-4 py-2" style="font-weight: 600;">
+                <!-- 1. Send / Order directly to Shop WhatsApp with Photo attached -->
+                <button type="button" id="modalWhatsAppBtn" class="btn btn-success btn-lg rounded-pill px-4 py-2" style="font-weight: 600;" onclick="orderCurrentModalImage()">
                     <i class="bi bi-whatsapp me-2"></i>Order on WhatsApp
-                </a>
+                </button>
                 
                 <!-- 2. Universal Share button (like Amazon/Myntra - shares to friends, WhatsApp, Instagram, etc.) -->
                 <button type="button" class="btn btn-light btn-lg rounded-pill px-4 py-2" style="font-weight: 600; color: #222;" onclick="shareCurrentModalImage()">
@@ -152,14 +152,42 @@
         document.getElementById('modalImage').src = imgUrl;
         document.getElementById('modalCategoryBadge').textContent = category;
         
-        const absoluteImageUrl = toAbsoluteUrl(imgUrl);
-        const shopPhone = '919652848029';
-        const msg = `Hello Manju Ladies Tailoring, I saw this ${category} design on your website and would like to stitch something similar.\n\nDesign Photo: ${absoluteImageUrl}`;
-        
-        document.getElementById('modalWhatsAppBtn').href = `https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`;
-        
         const modal = new bootstrap.Modal(document.getElementById('imageModal'));
         modal.show();
+    }
+
+    async function orderCurrentModalImage() {
+        const absoluteImageUrl = toAbsoluteUrl(currentModalImgUrl);
+        const category = currentModalCategory || 'Design';
+        const shopPhone = '919652848029';
+        const designPageUrl = `${window.location.origin}/Home/Design?img=${encodeURIComponent(absoluteImageUrl)}&cat=${encodeURIComponent(category)}`;
+        const msg = `Hello Manju Ladies Tailoring, I saw this ${category} design on your website and would like to stitch this!\n\nView design: ${designPageUrl}`;
+
+        // On mobile: Attach real photo directly to WhatsApp like Myntra
+        if (navigator.share) {
+            try {
+                const response = await fetch(absoluteImageUrl, { mode: 'cors' });
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const safeName = (category || 'design').replace(/[^a-zA-Z0-9]/g, '_') + '.jpg';
+                    const file = new File([blob], safeName, { type: blob.type || 'image/jpeg' });
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: `Order ${category} Design`,
+                            text: `Send to Manju Ladies Tailoring (+91 9652848029):\n\n${msg}`
+                        });
+                        return;
+                    }
+                }
+            } catch (e) {
+                // Fall through to direct link
+            }
+        }
+
+        // Direct WhatsApp link opening with rich preview card
+        window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     // Universal Share function (shares actual photo with text/link like Myntra)

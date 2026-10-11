@@ -34,7 +34,7 @@ namespace ManjuTailoringCentre.Services
             }
         }
 
-        public async Task<(string ImageUrl, string PublicId)> UploadImageAsync(IFormFile file)
+        public async Task<(string ImageUrl, string PublicId)> UploadImageAsync(IFormFile file, string? category = null)
         {
             if (_useCloudinary && _cloudinary != null)
             {
@@ -43,6 +43,7 @@ namespace ManjuTailoringCentre.Services
                 {
                     File = new FileDescription(file.FileName, stream),
                     Folder = "manju-tailoring/gallery",
+                    Tags = !string.IsNullOrWhiteSpace(category) ? category : "Designer Blouse",
                     Transformation = new Transformation()
                         .Width(1200).Height(1200)
                         .Crop("limit")
@@ -95,6 +96,24 @@ namespace ManjuTailoringCentre.Services
             }
         }
 
+        public async Task UpdateImageCategoryAsync(string publicId, string newCategory)
+        {
+            if (_useCloudinary && _cloudinary != null && !string.IsNullOrWhiteSpace(publicId) && !string.IsNullOrWhiteSpace(newCategory))
+            {
+                try
+                {
+                    await _cloudinary.UpdateResourceAsync(new UpdateParams(publicId)
+                    {
+                        Tags = newCategory
+                    });
+                }
+                catch
+                {
+                    // Ignore tag sync errors
+                }
+            }
+        }
+
         public async Task<List<(string ImageUrl, string PublicId, string Category)>> FetchAllImagesFromCloudinaryAsync()
         {
             var list = new List<(string ImageUrl, string PublicId, string Category)>();
@@ -106,14 +125,18 @@ namespace ManjuTailoringCentre.Services
                     {
                         Type = "upload",
                         Prefix = "manju-tailoring/gallery",
-                        MaxResults = 500
+                        MaxResults = 500,
+                        Tags = true
                     });
 
                     if (result.Resources != null)
                     {
                         foreach (var res in result.Resources)
                         {
-                            list.Add((res.SecureUrl.ToString(), res.PublicId, "General"));
+                            string cat = (res.Tags != null && res.Tags.Length > 0 && !string.IsNullOrWhiteSpace(res.Tags[0]))
+                                ? res.Tags[0]
+                                : "Designer Blouse";
+                            list.Add((res.SecureUrl.ToString(), res.PublicId, cat));
                         }
                     }
                 }

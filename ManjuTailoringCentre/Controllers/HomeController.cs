@@ -57,7 +57,7 @@ namespace ManjuTailoringCentre.Controllers
                         _db.GalleryPhotos.Add(new GalleryPhoto
                         {
                             Title = "Designer Wear",
-                            Category = "Designer Blouse",
+                            Category = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse",
                             ImageUrl = cp.ImageUrl,
                             CloudinaryPublicId = cp.PublicId,
                             UploadedAt = DateTime.UtcNow
@@ -69,6 +69,29 @@ namespace ManjuTailoringCentre.Controllers
             }
 
             return View(photos);
+        }
+
+        // ─── DEDICATED DESIGN DETAIL PAGE (Full Open Graph image preview on WhatsApp) ───
+        public async Task<IActionResult> Design(string? img, string? cat, int? id)
+        {
+            GalleryPhoto? photo = null;
+            if (id.HasValue)
+            {
+                photo = await _db.GalleryPhotos.FindAsync(id.Value);
+            }
+            if (photo == null && !string.IsNullOrEmpty(img))
+            {
+                photo = await _db.GalleryPhotos.FirstOrDefaultAsync(p => p.ImageUrl == img);
+            }
+
+            var model = new DesignPreviewViewModel
+            {
+                ImageUrl = photo?.ImageUrl ?? img ?? "/images/og-preview.jpg",
+                Category = photo?.Category ?? cat ?? "Designer Wear",
+                Title = photo?.Title ?? cat ?? "Custom Stitched Design"
+            };
+
+            return View(model);
         }
 
         public IActionResult Contact()

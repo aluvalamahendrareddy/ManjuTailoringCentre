@@ -93,7 +93,7 @@ namespace ManjuTailoringCentre.Controllers
                         _db.GalleryPhotos.Add(new GalleryPhoto
                         {
                             Title = "Designer Wear",
-                            Category = "Designer Blouse",
+                            Category = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse",
                             ImageUrl = cp.ImageUrl,
                             CloudinaryPublicId = cp.PublicId,
                             UploadedAt = DateTime.UtcNow
@@ -181,7 +181,7 @@ namespace ManjuTailoringCentre.Controllers
 
                 try
                 {
-                    var (imageUrl, publicId) = await _storageService.UploadImageAsync(photo);
+                    var (imageUrl, publicId) = await _storageService.UploadImageAsync(photo, selectedCategory);
 
                     var galleryPhoto = new GalleryPhoto
                     {
@@ -223,10 +223,17 @@ namespace ManjuTailoringCentre.Controllers
             var photo = await _db.GalleryPhotos.FindAsync(photoId);
             if (photo != null && !string.IsNullOrWhiteSpace(newCategory))
             {
-                photo.Category = newCategory.Trim();
-                photo.Title = newCategory.Trim();
+                var clean = newCategory.Trim();
+                photo.Category = clean;
+                photo.Title = clean;
                 await _db.SaveChangesAsync();
-                TempData["Success"] = "Photo category updated successfully!";
+
+                if (!string.IsNullOrEmpty(photo.CloudinaryPublicId))
+                {
+                    await _storageService.UpdateImageCategoryAsync(photo.CloudinaryPublicId, clean);
+                }
+
+                TempData["Success"] = $"Photo moved to '{clean}' and synced to cloud!";
             }
             return RedirectToAction("Dashboard");
         }
@@ -295,6 +302,10 @@ namespace ManjuTailoringCentre.Controllers
                 {
                     p.Category = trimmed;
                     p.Title = trimmed;
+                    if (!string.IsNullOrEmpty(p.CloudinaryPublicId))
+                    {
+                        await _storageService.UpdateImageCategoryAsync(p.CloudinaryPublicId, trimmed);
+                    }
                 }
 
                 await _db.SaveChangesAsync();
