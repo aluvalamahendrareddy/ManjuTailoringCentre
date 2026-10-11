@@ -156,37 +156,16 @@
         modal.show();
     }
 
-    async function orderCurrentModalImage() {
+    function orderCurrentModalImage() {
         const absoluteImageUrl = toAbsoluteUrl(currentModalImgUrl);
         const category = currentModalCategory || 'Design';
         const shopPhone = '919652848029';
-        const designPageUrl = `${window.location.origin}/Home/Design?img=${encodeURIComponent(absoluteImageUrl)}&cat=${encodeURIComponent(category)}`;
-        const msg = `Hello Manju Ladies Tailoring, I saw this ${category} design on your website and would like to stitch this!\n\nView design: ${designPageUrl}`;
+        const designPageUrl = `https://manjuladiestailoringcentre.onrender.com/Home/Design?img=${encodeURIComponent(absoluteImageUrl)}&cat=${encodeURIComponent(category)}`;
+        
+        // Put the design preview page link first so WhatsApp generates the image card preview
+        const msg = `Hello Shankaramma Garu, I saw this ${category} design on your website and want to order it!\n\n${designPageUrl}`;
 
-        // On mobile: Attach real photo directly to WhatsApp like Myntra
-        if (navigator.share) {
-            try {
-                const response = await fetch(absoluteImageUrl, { mode: 'cors' });
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const safeName = (category || 'design').replace(/[^a-zA-Z0-9]/g, '_') + '.jpg';
-                    const file = new File([blob], safeName, { type: blob.type || 'image/jpeg' });
-
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: `Order ${category} Design`,
-                            text: `Send to Manju Ladies Tailoring (+91 9652848029):\n\n${msg}`
-                        });
-                        return;
-                    }
-                }
-            } catch (e) {
-                // Fall through to direct link
-            }
-        }
-
-        // Direct WhatsApp link opening with rich preview card
+        // Directly open WhatsApp with Shankaramma's phone number (+91 9652848029)
         window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
 

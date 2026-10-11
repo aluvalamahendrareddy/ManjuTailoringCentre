@@ -1,7 +1,11 @@
 @model ManjuTailoringCentre.Models.DesignPreviewViewModel
 @{
     ViewData["Title"] = $"{Model.Category} - Manju Ladies Tailoring";
+    ViewData["OgTitle"] = $"{Model.Category} Design - Manju Ladies Tailoring";
+    ViewData["OgDescription"] = $"Custom stitched {Model.Category} by Shankaramma Garu. Perfect fitting guaranteed. Click to view or order.";
+    ViewData["OgImage"] = Model.ImageUrl;
     var pageUrl = $"https://manjuladiestailoringcentre.onrender.com/Home/Design?img={Uri.EscapeDataString(Model.ImageUrl)}&cat={Uri.EscapeDataString(Model.Category)}";
+    ViewData["OgUrl"] = pageUrl;
     var waOrderMsg = $"Hello Manju Ladies Tailoring, I saw this {Model.Category} design and want to order it: {pageUrl}";
     var waOrderUrl = $"https://wa.me/919652848029?text={Uri.EscapeDataString(waOrderMsg)}";
 }

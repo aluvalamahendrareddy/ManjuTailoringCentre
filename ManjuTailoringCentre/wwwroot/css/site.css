@@ -377,8 +377,11 @@ h1, h2, h3, .navbar-brand {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px;
-    background: rgba(255, 255, 255, 0.96);
+    height: auto;
+    min-height: 58px;
+    padding-top: 6px;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid rgba(194, 24, 91, 0.15);
@@ -387,7 +390,6 @@ h1, h2, h3, .navbar-brand {
     align-items: center;
     justify-content: space-around;
     z-index: 1040;
-    padding: 0 0.5rem;
 }
 
 .nav-item-mobile {
@@ -397,55 +399,60 @@ h1, h2, h3, .navbar-brand {
     justify-content: center;
     color: #666;
     text-decoration: none;
-    font-size: 0.72rem;
-    font-weight: 500;
-    padding: 0.3rem 0.5rem;
-    border-radius: 12px;
-    transition: all 0.2s ease;
+    padding: 2px 4px;
     flex: 1;
     text-align: center;
+    transition: color 0.2s ease;
 }
 
 .nav-item-mobile i {
-    font-size: 1.25rem;
-    margin-bottom: 2px;
+    font-size: 1.2rem;
     line-height: 1;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.nav-item-mobile span {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
 }
 
 .nav-item-mobile:hover,
 .nav-item-mobile.active {
-    color: var(--primary-color);
-    font-weight: 600;
+    color: var(--primary-color) !important;
+}
+
+.nav-item-mobile.active span {
+    color: var(--primary-color) !important;
+    font-weight: 700;
 }
 
 .nav-item-mobile.nav-gallery-pill {
     color: var(--primary-color);
-    font-weight: 700;
-    position: relative;
 }
 
 .nav-item-mobile.nav-gallery-pill i {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     color: var(--primary-color);
-    animation: gentle-pulse 2.5s infinite;
-}
-
-@keyframes gentle-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.12); }
 }
 
 .nav-item-mobile.nav-wa-mobile {
     color: #25d366;
-    font-weight: 600;
 }
 .nav-item-mobile.nav-wa-mobile i {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
+    color: #25d366;
+}
+.nav-item-mobile.nav-wa-mobile span {
     color: #25d366;
 }
 
 @media (max-width: 768px) {
     main {
-        padding-bottom: 70px !important;
+        padding-bottom: 85px !important;
     }
 }

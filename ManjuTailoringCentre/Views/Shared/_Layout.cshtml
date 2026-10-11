@@ -11,18 +11,18 @@
     
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Manju Ladies Tailoring Centre" />
-    <meta property="og:title" content="Manju Ladies Tailoring Centre - Gadwal" />
-    <meta property="og:description" content="Specialist in Designer Saree Blouses, Kids Frocks, Pattu Langa & Alterations. Managed by Shankaramma Garu." />
-    <meta property="og:image" content="https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg" />
-    <meta property="og:image:secure_url" content="https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg" />
+    <meta property="og:title" content="@(ViewData["OgTitle"] ?? "Manju Ladies Tailoring Centre - Gadwal")" />
+    <meta property="og:description" content="@(ViewData["OgDescription"] ?? "Specialist in Designer Saree Blouses, Kids Frocks, Pattu Langa & Alterations. Managed by Shankaramma Garu.")" />
+    <meta property="og:image" content="@(ViewData["OgImage"] ?? "https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg")" />
+    <meta property="og:image:secure_url" content="@(ViewData["OgImage"] ?? "https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg")" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="https://manjuladiestailoringcentre.onrender.com" />
+    <meta property="og:url" content="@(ViewData["OgUrl"] ?? "https://manjuladiestailoringcentre.onrender.com")" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Manju Ladies Tailoring Centre - Gadwal" />
-    <meta name="twitter:description" content="Specialist in Designer Saree Blouses, Kids Frocks, Pattu Langa & Alterations." />
-    <meta name="twitter:image" content="https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg" />
+    <meta name="twitter:title" content="@(ViewData["OgTitle"] ?? "Manju Ladies Tailoring Centre - Gadwal")" />
+    <meta name="twitter:description" content="@(ViewData["OgDescription"] ?? "Specialist in Designer Saree Blouses, Kids Frocks, Pattu Langa & Alterations.")" />
+    <meta name="twitter:image" content="@(ViewData["OgImage"] ?? "https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg")" />
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,16 +44,10 @@
                     <!-- Shown on tablet and desktop (>= 576px) -->
                     <span class="d-none d-sm-inline"><span class="fw-bold">Manju</span> <span class="fw-light">Ladies Tailoring</span></span>
                 </a>
-                <div class="d-flex align-items-center">
-                    <!-- Direct Mobile Gallery Pill (instant 1-tap access on mobile without opening hamburger) -->
-                    <a asp-area="" asp-controller="Home" asp-action="Gallery" class="btn btn-sm text-white rounded-pill px-3 py-1 me-2 d-lg-none shadow-sm" style="background-color: var(--primary-color); font-weight: 600; font-size: 0.78rem;">
-                        <i class="bi bi-images me-1"></i> Gallery
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                     <ul class="navbar-nav">
                         <li class="nav-item">
