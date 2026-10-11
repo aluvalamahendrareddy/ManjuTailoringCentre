@@ -3,56 +3,59 @@
     ViewData["Title"] = "Contact Us";
 }
 
-<section class="py-5" style="background: linear-gradient(135deg, var(--primary-color), #a52a2a); border-radius: 0 0 50px 50px;">
-    <div class="container py-5 text-center text-white fade-up">
-        <h1 class="display-3 mb-3 fw-bold">Visit or Call Us</h1>
-        <p class="lead mx-auto mb-4 opacity-75" style="max-width: 800px;">We're located in the heart of Gadwal. Come by for a consultation or reach out to us via WhatsApp.</p>
+<!-- Compact Hero Section (Reduced height to fit in one screen on desktop) -->
+<section class="py-3 py-md-4" style="background: linear-gradient(135deg, var(--primary-color), #a52a2a); border-radius: 0 0 30px 30px;">
+    <div class="container py-2 text-center text-white fade-up">
+        <h2 class="fw-bold mb-1" style="font-size: clamp(1.5rem, 5vw, 2.5rem);">Visit or Call Us</h2>
+        <p class="mx-auto mb-0 opacity-75 small" style="max-width: 650px;">We're located in the heart of Gadwal. Come by for a consultation or reach out on WhatsApp.</p>
     </div>
 </section>
 
-<div class="container py-5 mt-5">
-    <div class="row g-5">
+<!-- Compact Cards Section -->
+<div class="container py-3 py-md-4 mt-1 mt-md-2">
+    <div class="row g-3 g-md-4 align-items-stretch">
         <div class="col-lg-6 fade-up">
-            <div class="contact-container p-5 h-100" style="border: 1px solid rgba(0,0,0,0.05); border-radius: 30px; background: white; box-shadow: var(--premium-shadow);">
-                <h4 class="mb-4 fw-bold" style="color: var(--primary-color);">Send us a Message</h4>
+            <div class="contact-container p-3 p-md-4 h-100 bg-white rounded-4 shadow-sm border">
+                <h5 class="mb-3 fw-bold" style="color: var(--primary-color);"><i class="bi bi-chat-dots-fill me-2"></i>Send us a Message</h5>
                 @if (TempData["SuccessMessage"] != null)
                 {
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        @TempData["SuccessMessage"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 text-center mb-3" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 }
                 <form asp-action="Contact" method="post" id="contactForm">
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Full Name</label>
-                        <input type="text" asp-for="Name" class="form-control form-control-lg rounded-pill" placeholder="Enter your name" required>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold small mb-1">Full Name</label>
+                        <input type="text" asp-for="Name" class="form-control rounded-pill px-3" placeholder="Enter your name" style="font-size: 0.9rem;" required>
                     </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Phone Number</label>
-                        <input type="tel" asp-for="Phone" class="form-control form-control-lg rounded-pill" placeholder="Enter your phone" required>
+                    <div class="mb-2">
+                        <label class="form-label fw-bold small mb-1">Phone Number</label>
+                        <input type="tel" asp-for="Phone" class="form-control rounded-pill px-3" placeholder="Enter 10-digit phone number" style="font-size: 0.9rem;" required>
                     </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">What are you looking for?</label>
-                        <textarea asp-for="Message" class="form-control form-control-lg rounded-4" rows="4" placeholder="Mention design, event date, etc." required></textarea>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small mb-1">What are you looking for?</label>
+                        <textarea asp-for="Message" class="form-control rounded-4 px-3" rows="3" placeholder="Mention design, event date, etc." style="font-size: 0.9rem;" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill shadow">Submit Request</button>
-                    <div class="divider text-center my-4">OR</div>
-                    <a href="https://wa.me/919652848029" target="_blank" class="btn btn-outline-success btn-lg w-100 rounded-pill"><i class="bi bi-whatsapp me-2"></i>Contact via WhatsApp</a>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm py-2 mb-2" style="font-weight: 600; font-size: 0.9rem;">
+                        <i class="bi bi-send-fill me-1"></i>Submit Request
+                    </button>
+                    <a href="https://wa.me/919652848029" target="_blank" class="btn btn-outline-success w-100 rounded-pill py-2" style="font-weight: 600; font-size: 0.9rem;">
+                        <i class="bi bi-whatsapp me-2"></i>Contact via WhatsApp
+                    </a>
                 </form>
             </div>
         </div>
         <div class="col-lg-6 fade-up">
-            <div class="p-5 h-100" style="border: 1px solid rgba(0,0,0,0.05); border-radius: 30px; background: white; box-shadow: var(--premium-shadow);">
-                <h4 class="mb-4 fw-bold text-dark">Our Location</h4>
-                <div class="mb-4">
-                    <p class="mb-1 fw-bold fs-5 text-dark">Manju Ladies Tailoring Centre</p>
-                    <p class="text-muted"><i class="bi bi-geo-alt-fill me-2 text-primary"></i> Gandhi Chowk, Ashok Nagar, Ganjipeta, Gadwal, Telangana – 509125</p>
-                    <p class="text-muted"><i class="bi bi-building-fill-check me-2 text-primary"></i> <strong>Nearby Landmark:</strong> Pallavi Herbal Beauty Parlour</p>
-                </div>
-                <div class="rounded-4 overflow-hidden mb-4" style="height: 350px;">
+            <div class="p-3 p-md-4 h-100 bg-white rounded-4 shadow-sm border d-flex flex-column">
+                <h5 class="mb-2 fw-bold text-dark"><i class="bi bi-geo-alt-fill me-2 text-danger"></i>Our Location in Gadwal</h5>
+                <p class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">Manju Ladies Tailoring Centre</p>
+                <p class="text-muted small mb-1"><i class="bi bi-geo me-1 text-primary"></i> Gandhi Chowk, Ashok Nagar, Ganjipeta, Gadwal, Telangana – 509125</p>
+                <p class="text-muted small mb-3"><i class="bi bi-building me-1 text-primary"></i> <strong>Nearby Landmark:</strong> Pallavi Herbal Beauty Parlour</p>
+                <div class="rounded-3 overflow-hidden mt-auto" style="height: 220px; border: 1px solid rgba(0,0,0,0.1);">
                     <iframe 
                       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15335.539045618458!2d77.8016!3d16.2307!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb5c34e062e7371%3A0xc3baedf6620ca94e!2sGandhi%20Chowk%2C%20Gadwal%2C%20Telangana%20509125!5e0!3m2!1sen!2sin!4v1711394123567!5m2!1sen!2sin" 
-                      width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                      width="100%" height="220" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
             </div>

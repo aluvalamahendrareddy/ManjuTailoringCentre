@@ -258,26 +258,63 @@ namespace ManjuTailoringCentre.Controllers
             return View(categories);
         }
 
-        // ─── ADD NEW CATEGORY ─────────────────────────────────────────────────
+        // ─── ADD NEW CATEGORY (WITH OPTIONAL PHOTOS) ───────────────────────────
         [AdminOnly]
         [HttpPost]
-        public async Task<IActionResult> AddCategory(string categoryName, string? returnUrl)
+        public async Task<IActionResult> AddCategory(string categoryName, List<IFormFile>? photos, string? returnUrl)
         {
-            if (!string.IsNullOrWhiteSpace(categoryName))
+            if (string.IsNullOrWhiteSpace(categoryName))
             {
-                var cleanName = categoryName.Trim();
-                var exists = await _db.Categories.AnyAsync(c => c.Name.ToLower() == cleanName.ToLower());
-                if (!exists)
+                TempData["Error"] = "Category name cannot be empty.";
+                if (returnUrl == "categories") return RedirectToAction("Categories");
+                return RedirectToAction("Dashboard");
+            }
+
+            var cleanName = categoryName.Trim();
+            var exists = await _db.Categories.AnyAsync(c => c.Name.ToLower() == cleanName.ToLower());
+            if (!exists)
+            {
+                _db.Categories.Add(new CategoryItem { Name = cleanName });
+                await _db.SaveChangesAsync();
+            }
+
+            int uploadedCount = 0;
+            if (photos != null && photos.Count > 0)
+            {
+                var allowedTypes = new[] { "image/jpeg", "image/jpg", "image/png", "image/webp" };
+                foreach (var photo in photos)
                 {
-                    _db.Categories.Add(new CategoryItem { Name = cleanName });
-                    await _db.SaveChangesAsync();
-                    TempData["Success"] = $"Category '{cleanName}' added successfully!";
+                    if (photo.Length == 0 || !allowedTypes.Contains(photo.ContentType.ToLower())) continue;
+                    try
+                    {
+                        var (imageUrl, publicId) = await _storageService.UploadImageAsync(photo, cleanName);
+                        _db.GalleryPhotos.Add(new GalleryPhoto
+                        {
+                            Title = cleanName,
+                            Category = cleanName,
+                            ImageUrl = imageUrl,
+                            CloudinaryPublicId = publicId,
+                            UploadedAt = DateTime.UtcNow
+                        });
+                        uploadedCount++;
+                    }
+                    catch { }
                 }
-                else
+                if (uploadedCount > 0)
                 {
-                    TempData["Error"] = $"Category '{cleanName}' already exists.";
+                    await _db.SaveChangesAsync();
                 }
             }
+
+            if (uploadedCount > 0)
+            {
+                TempData["Success"] = $"Category '{cleanName}' created with {uploadedCount} photo(s)!";
+            }
+            else
+            {
+                TempData["Success"] = $"Category '{cleanName}' added successfully!";
+            }
+
             if (returnUrl == "categories") return RedirectToAction("Categories");
             return RedirectToAction("Dashboard");
         }

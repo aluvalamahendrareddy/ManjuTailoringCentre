@@ -4,45 +4,55 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Manju Ladies Tailoring Centre</title>
-    
-    <!-- SEO & Open Graph Meta Tags (for WhatsApp, Facebook & Google Previews) -->
-    <meta name="description" content="Manju Ladies Tailoring Centre - Best Ladies Tailor in Gadwal. Specialist in Designer Blouses, Kids Frocks, Pattu Langa & Bridal stitching. Managed by Shankaramma Garu." />
-    <meta name="keywords" content="Ladies Tailor in Gadwal, Blouse Stitching, Designer Blouse, Gadwal Tailoring, Shankaramma Tailor, Kids dresses Gadwal" />
-    
+
+    <!-- Open Graph / WhatsApp Preview Meta Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Manju Ladies Tailoring Centre" />
-    <meta property="og:title" content="@(ViewData["OgTitle"] ?? "Manju Ladies Tailoring Centre - Gadwal")" />
-    <meta property="og:description" content="@(ViewData["OgDescription"] ?? "Specialist in Designer Saree Blouses, Kids Frocks, Pattu Langa & Alterations. Managed by Shankaramma Garu.")" />
-    <meta property="og:image" content="@(ViewData["OgImage"] ?? "https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg")" />
-    <meta property="og:image:secure_url" content="@(ViewData["OgImage"] ?? "https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg")" />
+    <meta property="og:site_name" content="Manju Ladies Tailoring Centre, Gadwal" />
+    <meta property="og:title" content="Manju Ladies Tailoring Centre – Designer Blouse & Ladies Specialist" />
+    <meta property="og:description" content="Custom Designer Blouses, Cute Kids Dresses, Pattu Langa & Sarees stitched with 20+ years of perfection in Gadwal. Tap to view design gallery & order on WhatsApp!" />
+    <meta property="og:image" content="https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg" />
+    <meta property="og:image:secure_url" content="https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="@(ViewData["OgUrl"] ?? "https://manjuladiestailoringcentre.onrender.com")" />
+    <meta property="og:image:alt" content="Manju Ladies Tailoring Centre Designs" />
+    <meta property="og:url" content="https://manjuladiestailoringcentre.onrender.com" />
+
+    <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="@(ViewData["OgTitle"] ?? "Manju Ladies Tailoring Centre - Gadwal")" />
-    <meta name="twitter:description" content="@(ViewData["OgDescription"] ?? "Specialist in Designer Saree Blouses, Kids Frocks, Pattu Langa & Alterations.")" />
-    <meta name="twitter:image" content="@(ViewData["OgImage"] ?? "https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg")" />
-    
-    <!-- Fonts -->
+    <meta name="twitter:title" content="Manju Ladies Tailoring Centre – Designer Blouse Specialist" />
+    <meta name="twitter:description" content="20+ Years of Craftsmanship in Gadwal. Designer blouses, kids frocks, sarees & custom ladies tailoring." />
+    <meta name="twitter:image" content="https://manjuladiestailoringcentre.onrender.com/images/og-preview.jpg" />
+
+    <!-- Google Fonts & Bootstrap Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 72px;
+        }
+    </style>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-lg fixed-top shadow-sm">
             <div class="container text-uppercase">
-                <a class="navbar-brand fs-4" asp-area="" asp-controller="Home" asp-action="Index">
-                    <!-- Shown on mobile only (< 576px) -->
-                    <span class="d-inline d-sm-none"><span class="fw-bold">MLTC</span></span>
+                <a class="navbar-brand fs-4" href="#home">
+                    <!-- Shown on mobile only (< 576px): Manju Tailoring with scissor icon on right -->
+                    <span class="d-inline d-sm-none d-inline-flex align-items-center">
+                        <span class="fw-bold">Manju Tailoring</span>
+                        <i class="bi bi-scissors ms-1" style="font-size: 1rem; color: var(--accent-color);"></i>
+                    </span>
                     <!-- Shown on tablet and desktop (>= 576px) -->
-                    <span class="d-none d-sm-inline"><span class="fw-bold">Manju</span> <span class="fw-light">Ladies Tailoring</span></span>
+                    <span class="d-none d-sm-inline">
+                        <span class="fw-bold">Manju</span> <span class="fw-light">Ladies Tailoring</span>
+                    </span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -51,19 +61,19 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link active" href="#home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                            <a class="nav-link" href="#about">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Services">Services</a>
+                            <a class="nav-link" href="#services">Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Gallery">Gallery</a>
+                            <a class="nav-link" href="#gallery">Gallery</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+                            <a class="nav-link" href="#contact">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -71,7 +81,7 @@
         </nav>
     </header>
 
-    <main role="main" class="pb-3" style="margin-top: 80px;">
+    <main role="main" class="pb-3" style="margin-top: 72px;">
         @RenderBody()
     </main>
 
@@ -85,10 +95,10 @@
                 <div class="col-md-4 mb-4">
                     <h5 class="text-uppercase mb-4 fw-bold" style="color: #d4af37;">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a asp-action="About" class="text-white-50 text-decoration-none">About Us</a></li>
-                        <li><a asp-action="Services" class="text-white-50 text-decoration-none">Our Services</a></li>
-                        <li><a asp-action="Gallery" class="text-white-50 text-decoration-none">Design Gallery</a></li>
-                        <li><a asp-action="Contact" class="text-white-50 text-decoration-none">Book Appointment</a></li>
+                        <li><a href="#about" class="text-white-50 text-decoration-none">About Us</a></li>
+                        <li><a href="#services" class="text-white-50 text-decoration-none">Our Services</a></li>
+                        <li><a href="#gallery" class="text-white-50 text-decoration-none">Design Gallery</a></li>
+                        <li><a href="#contact" class="text-white-50 text-decoration-none">Book Appointment</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 mb-4">
@@ -115,15 +125,15 @@
 
     <!-- Mobile Bottom Navigation Bar (1-Tap Thumb Access for Mobile Users) -->
     <nav class="mobile-bottom-nav d-md-none">
-        <a asp-controller="Home" asp-action="Index" class="nav-item-mobile @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+        <a href="#home" class="nav-item-mobile active" id="mob-nav-home">
             <i class="bi bi-house-door"></i>
             <span>Home</span>
         </a>
-        <a asp-controller="Home" asp-action="Gallery" class="nav-item-mobile @(ViewContext.RouteData.Values["action"]?.ToString() == "Gallery" ? "active" : "")">
+        <a href="#gallery" class="nav-item-mobile" id="mob-nav-gallery">
             <i class="bi bi-images"></i>
             <span>Gallery</span>
         </a>
-        <a asp-controller="Home" asp-action="Services" class="nav-item-mobile @(ViewContext.RouteData.Values["action"]?.ToString() == "Services" ? "active" : "")">
+        <a href="#services" class="nav-item-mobile" id="mob-nav-services">
             <i class="bi bi-scissors"></i>
             <span>Services</span>
         </a>
@@ -140,6 +150,51 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Smooth scroll spy for SPA top and mobile nav
+        document.addEventListener('DOMContentLoaded', function () {
+            const sections = document.querySelectorAll('section[id]');
+            const topNavLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            const mobNavHome = document.getElementById('mob-nav-home');
+            const mobNavGallery = document.getElementById('mob-nav-gallery');
+            const mobNavServices = document.getElementById('mob-nav-services');
+
+            // Collapse mobile navbar on link click
+            topNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const navbarCollapse = document.querySelector('.navbar-collapse');
+                    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                        new bootstrap.Collapse(navbarCollapse).hide();
+                    }
+                });
+            });
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                const scrollY = window.pageYOffset;
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.offsetHeight;
+                    if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                if (current) {
+                    topNavLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${current}`) {
+                            link.classList.add('active');
+                        }
+                    });
+
+                    if (mobNavHome) mobNavHome.classList.toggle('active', current === 'home');
+                    if (mobNavGallery) mobNavGallery.classList.toggle('active', current === 'gallery');
+                    if (mobNavServices) mobNavServices.classList.toggle('active', current === 'services');
+                }
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

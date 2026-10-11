@@ -20,25 +20,52 @@ namespace ManjuTailoringCentre.Controllers
             _db = db;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index([FromServices] IImageStorageService storageService)
         {
-            var services = GetServices().Take(4).ToList();
-            var reviews = GetReviews();
-            ViewBag.Services = services;
-            ViewBag.Reviews = reviews;
-            return View();
+            var photos = await _db.GalleryPhotos
+                .OrderByDescending(p => p.UploadedAt)
+                .ToListAsync();
+
+            // Auto-recovery: If local database was restarted/cleared, recover uploaded photos from Cloudinary!
+            if (!photos.Any())
+            {
+                var cloudPhotos = await storageService.FetchAllImagesFromCloudinaryAsync();
+                if (cloudPhotos.Any())
+                {
+                    foreach (var cp in cloudPhotos)
+                    {
+                        var cat = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse";
+                        if (cat.Equals("Pattu Langa / Half Saree", StringComparison.OrdinalIgnoreCase) || 
+                            cat.Equals("Saree Kongu Muddillu", StringComparison.OrdinalIgnoreCase))
+                        {
+                            cat = "Saree kongu mudulu";
+                        }
+
+                        _db.GalleryPhotos.Add(new GalleryPhoto
+                        {
+                            Title = cat,
+                            Category = cat,
+                            ImageUrl = cp.ImageUrl,
+                            CloudinaryPublicId = cp.PublicId,
+                            UploadedAt = DateTime.UtcNow
+                        });
+                    }
+                    await _db.SaveChangesAsync();
+                    photos = await _db.GalleryPhotos.OrderByDescending(p => p.UploadedAt).ToListAsync();
+                }
+            }
+
+            ViewBag.Services = GetServices();
+            ViewBag.Reviews = GetReviews();
+            ViewBag.Photos = photos;
+            return View(new ContactFormViewModel());
         }
 
-        public IActionResult About()
-        {
-            return View();
-        }
+        public IActionResult About() => Redirect("/#about");
 
-        public IActionResult Services()
-        {
-            var services = GetServices();
-            return View(services);
-        }
+        public IActionResult Services() => Redirect("/#services");
+
+        public IActionResult Gallery() => Redirect("/#gallery");
 
         public async Task<IActionResult> Gallery([FromServices] IImageStorageService storageService)
         {
@@ -101,10 +128,7 @@ namespace ManjuTailoringCentre.Controllers
             return View(model);
         }
 
-        public IActionResult Contact()
-        {
-            return View();
-        }
+        public IActionResult Contact() => Redirect("/#contact");
 
         [HttpPost]
         public IActionResult Contact(ContactFormViewModel model)
@@ -112,9 +136,10 @@ namespace ManjuTailoringCentre.Controllers
             if (ModelState.IsValid)
             {
                 TempData["SuccessMessage"] = "Message received! We will get back to you soon.";
-                return RedirectToAction("Contact");
+                return Redirect("/#contact");
             }
-            return View(model);
+            TempData["ErrorMessage"] = "Please provide all required fields.";
+            return Redirect("/#contact");
         }
 
         public IActionResult Privacy()

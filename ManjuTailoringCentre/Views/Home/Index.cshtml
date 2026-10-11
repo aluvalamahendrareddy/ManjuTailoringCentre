@@ -1,20 +1,25 @@
+@model ManjuTailoringCentre.Models.ContactFormViewModel
 @using ManjuTailoringCentre.Models
 @{
-    ViewData["Title"] = "Home";
-    var services = ViewBag.Services as List<ServiceViewModel>;
-    var reviews = ViewBag.Reviews as List<ReviewViewModel>;
+    ViewData["Title"] = "Manju Ladies Tailoring Centre - Gadwal";
+    var services = ViewBag.Services as List<ServiceViewModel> ?? new List<ServiceViewModel>();
+    var reviews = ViewBag.Reviews as List<ReviewViewModel> ?? new List<ReviewViewModel>();
+    var photos = ViewBag.Photos as List<GalleryPhoto> ?? new List<GalleryPhoto>();
+    var groupedPhotos = photos.GroupBy(p => p.Category).ToList();
 }
 
-<!-- Hero Section - compact on mobile -->
-<section class="hero" style="min-height: auto; padding: 1.5rem 0 1rem;">
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 1: HOME (HERO & STATS)
+════════════════════════════════════════════════════════════════════════════ -->
+<section id="home" class="hero" style="min-height: auto; padding: 1.5rem 0 1rem;">
     <div class="container hero-content">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-3 mb-lg-0 fade-up">
                 <h1 class="hero-title mb-3">Perfect Fit,<br><span class="text-accent" style="color: var(--accent-color);">Elegant Style</span></h1>
-                <p class="mb-3 text-muted hero-lead" style="font-size: 0.95rem; line-height: 1.55;">Manju Ladies Tailoring Centre - Specialists in custom designer blouses, cute kids' dresses &amp; frocks, chudidhars, and traditional pattu langa / half sarees crafted for every special moment.</p>
+                <p class="mb-3 text-muted hero-lead" style="font-size: 0.95rem; line-height: 1.55;">Manju Ladies Tailoring Centre - Specialists in custom designer blouses, cute kids' dresses &amp; frocks, chudidhars, and traditional saree kongu mudulu crafted for every special moment.</p>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a asp-action="Contact" class="btn btn-primary btn-hero">Book Appointment</a>
-                    <a asp-action="Gallery" class="btn btn-outline-gold btn-hero">View Designs</a>
+                    <a href="#contact" class="btn btn-primary btn-hero">Book Appointment</a>
+                    <a href="#gallery" class="btn btn-outline-gold btn-hero">View Designs</a>
                 </div>
                 <div class="mt-3 d-flex align-items-center gap-2">
                     <div class="avatar-group">
@@ -28,7 +33,7 @@
                 </div>
             </div>
             <div class="col-lg-6 position-relative fade-up text-center d-none d-lg-block">
-                <img src="/images/hero.png" class="img-fluid rounded-4 shadow-lg" alt="Tailoring Showcase">
+                <img src="/images/hero.png" class="img-fluid rounded-4 shadow-lg" alt="Tailoring Showcase" style="max-height: 380px; object-fit: cover;">
                 <div class="position-absolute bottom-0 end-0 bg-white p-3 rounded-4 shadow m-3" style="border-left: 5px solid var(--accent-color);">
                     <p class="mb-0 fw-bold">10 AM - 8 PM</p>
                     <small class="text-muted">Monday - Saturday</small>
@@ -39,7 +44,7 @@
 </section>
 
 <!-- Stats / Highlights Section -->
-<section class="py-3 py-md-5 bg-white border-bottom">
+<div class="py-3 py-md-4 bg-white border-bottom">
     <div class="container text-center">
         <div class="row g-2 g-md-4">
             <div class="col-3 col-md-3">
@@ -60,76 +65,177 @@
             </div>
         </div>
     </div>
-</section>
+</div>
 
-<!-- Services Overview -->
-<section class="py-3 py-md-5" id="services">
-    <div class="container py-2 py-md-4">
-        <div class="text-center mb-3 mb-md-5 fade-up">
-            <span class="text-uppercase fw-bold text-accent px-3 py-1 bg-light rounded-pill" style="color: var(--accent-color); font-size: 0.8rem;">Our Craftsmanship</span>
-            <h2 class="mt-2 mt-md-3" style="font-size: clamp(1.4rem, 5vw, 2.5rem);">Tailoring Services We Provide</h2>
-            <div class="mx-auto mt-2" style="width: 60px; height: 3px; background: var(--accent-color);"></div>
-        </div>
-        <div class="row g-3">
-            @if(services != null) {
-                @foreach (var service in services)
-                {
-                    <div class="col-6 col-md-3 fade-up">
-                        <div class="service-card p-3">
-                            <i class="bi @service.Icon service-icon" style="font-size: 1.8rem; margin-bottom: 0.75rem;"></i>
-                            <h5 style="font-size: 0.9rem;" class="mb-1">@service.Title</h5>
-                            <p class="text-muted mb-0" style="font-size: 0.75rem; line-height: 1.4;">@service.Description</p>
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-        <div class="text-center mt-3 mt-md-5">
-            <a asp-action="Services" class="btn btn-outline-dark px-4 rounded-pill">View All Services</a>
-        </div>
-    </div>
-</section>
-
-<!-- Featured Section - About Shankaramma -->
-<section class="py-3 py-md-5" style="background: #fafafa;">
-    <div class="container py-2 py-md-4">
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 2: ABOUT US (SHANKARAMMA & HERITAGE)
+════════════════════════════════════════════════════════════════════════════ -->
+<section id="about" class="py-4 py-md-5" style="background: #fafafa;">
+    <div class="container py-2 py-md-3">
         <div class="row align-items-center g-3 g-md-5">
             <div class="col-lg-5 fade-up text-center">
                 <div class="d-inline-block text-center">
                     <img src="/images/shankaramma.jpg" alt="Shankaramma - Founder &amp; Master Tailor" class="img-fluid rounded-4 shadow-sm" style="max-height: 280px; width: auto; object-fit: cover; border: 3px solid var(--accent-color);" />
                     <div class="mt-2">
-                        <h5 class="fw-bold mb-1" style="color: var(--primary-color); font-size: 1.1rem;">Shankaramma</h5>
+                        <h5 class="fw-bold mb-1" style="color: var(--primary-color); font-size: 1.15rem;">Shankaramma</h5>
                         <p class="text-muted mb-0 small" style="font-weight: 500;">Founder &amp; Master Designer</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-7 fade-up">
-                <h2 class="mb-3" style="font-size: clamp(1.3rem, 5vw, 2rem);">Dedicated to Precision and Craft</h2>
-                <p class="text-muted" style="font-size: 0.9rem;">Under the expert management of Shankaramma, Manju Ladies Tailoring Centre has become the go-to destination for ladies in Gadwal looking for the perfect fit.</p>
-                <ul class="list-unstyled mb-3" style="font-size: 0.9rem;">
+                <span class="text-uppercase fw-bold text-accent px-3 py-1 bg-white rounded-pill shadow-sm" style="color: var(--accent-color); font-size: 0.75rem; letter-spacing: 0.5px;">About Our Legacy</span>
+                <h2 class="mt-2 mb-3 fw-bold" style="font-size: clamp(1.3rem, 5vw, 2.2rem);">Dedicated to Precision and Craft</h2>
+                <p class="lead text-muted mb-3" style="font-size: 0.95rem;">Under the expert guidance of Shankaramma, Manju Ladies Tailoring Centre has earned the trust of families across Gadwal with unmatched fitting and traditional care.</p>
+                <p class="text-muted mb-3" style="font-size: 0.9rem;">From custom bridal blouses and delicate kids' frocks to grand saree kongu mudulu, chudidhars, and festive gowns, every single cut and stitch is tailored for your perfect confidence.</p>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="p-2 border rounded-3 text-center bg-white shadow-sm">
+                            <h4 class="fw-bold mb-0" style="color: var(--accent-color);">20+</h4>
+                            <small class="text-uppercase text-muted" style="font-size: 0.7rem;">Years Experience</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 border rounded-3 text-center bg-white shadow-sm">
+                            <h4 class="fw-bold mb-0" style="color: var(--primary-color);">10,000+</h4>
+                            <small class="text-uppercase text-muted" style="font-size: 0.7rem;">Happy Customers</small>
+                        </div>
+                    </div>
+                </div>
+                <ul class="list-unstyled mb-3" style="font-size: 0.88rem;">
                     <li><i class="bi bi-check-circle-fill text-success me-2"></i> Quality high-speed Japanese machines</li>
                     <li><i class="bi bi-check-circle-fill text-success me-2"></i> Experienced tailors and handwork artists</li>
                     <li><i class="bi bi-check-circle-fill text-success me-2"></i> Same-day alteration services available</li>
                 </ul>
-                <a asp-action="About" class="btn btn-primary px-4 rounded-pill shadow">Read Our Story</a>
+                <a href="#contact" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm btn-hero">Visit Our Workshop</a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Testimonials Section -->
-<section class="py-3 py-md-5 bg-white">
-    <div class="container py-2 py-md-4">
-        <div class="text-center mb-3 mb-md-5 fade-up">
-            <h2 class="mb-2" style="font-size: clamp(1.3rem, 5vw, 2rem);">What Our Customers Say</h2>
-            <div class="mx-auto" style="width: 50px; height: 3px; background: var(--accent-color);"></div>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 3: SERVICES
+════════════════════════════════════════════════════════════════════════════ -->
+<section id="services" class="py-4 py-md-5 bg-white border-bottom">
+    <div class="container py-2 py-md-3">
+        <div class="text-center mb-3 mb-md-4 fade-up">
+            <span class="text-uppercase fw-bold text-accent px-3 py-1 bg-light rounded-pill" style="color: var(--accent-color); font-size: 0.78rem;">Our Craftsmanship</span>
+            <h2 class="mt-2 fw-bold" style="font-size: clamp(1.4rem, 5vw, 2.3rem);">Expert Tailoring Services</h2>
+            <div class="mx-auto mt-2" style="width: 50px; height: 3px; background: var(--accent-color);"></div>
         </div>
+        <div class="row g-3 g-md-4 justify-content-center">
+            @if(services != null) {
+                @foreach (var service in services)
+                {
+                    <div class="col-6 col-md-4 fade-up">
+                        <div class="service-card p-3 h-100 text-center d-flex flex-column" style="border-radius: 18px; border: 1px solid rgba(0,0,0,0.05); box-shadow: var(--premium-shadow);">
+                            <div class="mx-auto mb-2" style="width: 58px; height: 58px; min-width: 58px; min-height: 58px; border-radius: 50%; background: var(--bg-pink); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 1.6rem;">
+                                <i class="bi @service.Icon"></i>
+                            </div>
+                            <h5 style="font-size: 0.95rem;" class="mb-1 fw-bold">@service.Title</h5>
+                            <p class="text-muted mb-2 small flex-grow-1" style="font-size: 0.78rem; line-height: 1.4;">@service.Description</p>
+                            <div class="h6 mb-2 text-center" style="color: var(--primary-color); font-size: 0.85rem;">From <span class="fw-bold fs-5">@service.Price</span></div>
+                            <a href="https://wa.me/919652848029?text=I'm interested in @service.Title" target="_blank" class="btn btn-outline-gold rounded-pill w-100 py-1" style="font-size: 0.8rem; font-weight: 600;">Get Quote</a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 4: DESIGN GALLERY
+════════════════════════════════════════════════════════════════════════════ -->
+<section id="gallery" class="py-4 py-md-5" style="background: #fafafa;">
+    <div class="container py-2 text-center fade-up mb-3">
+        <span class="text-uppercase fw-bold px-3 py-1 bg-white rounded-pill shadow-sm" style="color: var(--accent-color); font-size: 0.75rem; letter-spacing: 0.5px;">Our Work</span>
+        <h2 class="mt-2 fw-bold" style="color: var(--primary-color); font-size: clamp(1.4rem, 5vw, 2.3rem);">Our Stitching Gallery</h2>
+        <p class="text-muted mx-auto mb-0" style="max-width: 600px; font-size: 0.88rem;">Tap on any design to view details, order on WhatsApp, or share.</p>
+    </div>
+
+    <div class="container-fluid px-2 px-md-4 px-lg-5">
+        @if (!photos.Any())
+        {
+            <div class="text-center py-4">
+                <i class="bi bi-image" style="font-size: 3.5rem; color: #ccc;"></i>
+                <p class="text-muted mt-2">Gallery coming soon! Check back or contact us directly.</p>
+            </div>
+        }
+        else
+        {
+            <!-- Category Filter Tabs -->
+            @if (groupedPhotos.Count > 1)
+            {
+                <div class="text-center mb-3">
+                    <div class="d-flex flex-wrap justify-content-center gap-1 gap-md-2">
+                        <button class="btn btn-sm rounded-pill px-3 filter-btn active-filter"
+                                style="background: var(--primary-color); color: white; border: none; font-size: 0.78rem;"
+                                onclick="filterGallery('all', this)">
+                            All (@photos.Count)
+                        </button>
+                        @foreach (var group in groupedPhotos)
+                        {
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-btn"
+                                    style="font-size: 0.78rem;"
+                                    onclick="filterGallery('@group.Key', this)">
+                                @group.Key (@group.Count())
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Photo Grid -->
+            <div class="gallery-grid" id="galleryGrid">
+                @foreach (var photo in photos)
+                {
+                    <div class="gallery-card" data-category="@photo.Category"
+                         onclick="openImageModal('@photo.ImageUrl', '@photo.Category', '@photo.Title', @photo.Id)">
+                        <div class="gallery-img-wrap">
+                            <img src="@photo.ImageUrl" alt="@photo.Title" loading="lazy" />
+                            <div class="gallery-overlay">
+                                <span class="gallery-zoom-icon">
+                                    <i class="bi bi-arrows-fullscreen"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="gallery-caption d-none d-md-block">
+                            <span class="gallery-cat-pill">
+                                <i class="bi bi-tag-fill me-1" style="color: var(--primary-color);"></i>@photo.Category
+                            </span>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Compact Like What You See CTA Banner -->
+        <div class="py-3 py-md-4 my-3 mx-1 mx-md-3" style="background: var(--primary-color); border-radius: 20px; overflow: hidden;">
+            <div class="container py-2 text-center text-white">
+                <h3 class="fw-bold mb-1" style="font-size: clamp(1.2rem, 4vw, 1.8rem);">Like What You See?</h3>
+                <p class="mb-3 opacity-90 mx-auto" style="max-width: 500px; font-size: 0.88rem; line-height: 1.45;">Send us your design idea on WhatsApp and we'll make it happen!</p>
+                <a href="https://wa.me/919652848029" target="_blank" class="btn btn-light px-4 py-2 rounded-pill shadow-sm" style="color: var(--primary-color); font-weight: 600; font-size: 0.88rem;">
+                    <i class="bi bi-whatsapp me-2 text-success"></i>Order Your Design
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 5: TESTIMONIALS
+════════════════════════════════════════════════════════════════════════════ -->
+<section id="reviews" class="py-4 py-md-5 bg-white border-bottom">
+    <div class="container py-2 text-center fade-up">
+        <h2 class="mb-2 fw-bold" style="font-size: clamp(1.3rem, 5vw, 2rem);">What Our Customers Say</h2>
+        <div class="mx-auto mb-3" style="width: 50px; height: 3px; background: var(--accent-color);"></div>
+
         <div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 @if(reviews != null) {
                     for(int i=0; i < reviews.Count; i++) {
                         <div class="carousel-item @(i == 0 ? "active" : "")">
-                            <div class="review-item text-center mx-auto" style="max-width: 600px; padding: 1.25rem; margin: 0.5rem;">
+                            <div class="review-item text-center mx-auto" style="max-width: 600px; padding: 1.25rem; margin: 0.5rem auto;">
                                 <i class="bi bi-quote fs-2" style="color: var(--accent-color);"></i>
                                 <p class="mt-1" style="font-size: 0.95rem;">"@reviews[i].Comment"</p>
                                 <div class="mt-2">
@@ -153,22 +259,195 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-4 py-md-5 mx-2 mx-md-3 mb-2" style="background: linear-gradient(rgba(139,0,0,0.92), rgba(139,0,0,0.92)), url('/images/hero.png'); border-radius: 24px; background-size: cover; background-position: center; overflow: hidden;">
-    <div class="container py-2 py-md-3 text-center text-white">
-        <div class="fade-up px-2">
-            <h2 class="fw-bold mb-2" style="font-size: clamp(1.4rem, 5vw, 2.5rem);">Ready to Get Your Custom Fit?</h2>
-            <p class="mb-3 opacity-75 mx-auto" style="max-width: 650px; font-size: 0.9rem;">
-                Connect with us on WhatsApp or visit us at Gandhi Chowk for a consultation.
-            </p>
-            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center align-items-center">
-                <a href="https://wa.me/919652848029" target="_blank" class="btn btn-light px-4 py-2 rounded-pill shadow w-100 w-sm-auto" style="max-width: 280px; font-weight: 600; font-size: 0.9rem;">
-                    <i class="bi bi-whatsapp me-2 text-success align-middle"></i>Contact via WhatsApp
-                </a>
-                <a asp-action="Contact" class="btn btn-outline-light px-4 py-2 rounded-pill w-100 w-sm-auto" style="max-width: 280px; font-weight: 600; font-size: 0.9rem;">
-                    <i class="bi bi-geo-alt-fill me-2 align-middle"></i>Locate on Map
-                </a>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 6: CONTACT & LOCATION (COMPACT IN ONE SCREEN ON WEB)
+════════════════════════════════════════════════════════════════════════════ -->
+<section id="contact" class="py-4 py-md-5" style="background: #fafafa;">
+    <div class="container py-2">
+        <div class="text-center mb-3 mb-md-4 fade-up">
+            <span class="text-uppercase fw-bold text-accent px-3 py-1 bg-white rounded-pill shadow-sm" style="color: var(--accent-color); font-size: 0.78rem;">Get in Touch</span>
+            <h2 class="mt-2 fw-bold" style="font-size: clamp(1.4rem, 5vw, 2.3rem);">Visit or Call Us</h2>
+            <p class="text-muted small mb-0">We're located in the heart of Gadwal. Come by for a consultation or reach out on WhatsApp.</p>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 text-center mb-3" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-pill px-4 text-center mb-3" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row g-3 g-md-4 align-items-stretch">
+            <!-- Left Card: Message Form -->
+            <div class="col-lg-6 fade-up">
+                <div class="contact-card p-3 p-md-4 h-100 bg-white rounded-4 shadow-sm border">
+                    <h5 class="fw-bold mb-3" style="color: var(--primary-color);"><i class="bi bi-chat-dots-fill me-2"></i>Send us a Message</h5>
+                    <form asp-action="Contact" method="post" id="contactForm">
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small mb-1">Full Name</label>
+                            <input type="text" asp-for="Name" class="form-control rounded-pill px-3" placeholder="Enter your name" style="font-size: 0.9rem;" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label fw-bold small mb-1">Phone Number</label>
+                            <input type="tel" asp-for="Phone" class="form-control rounded-pill px-3" placeholder="Enter 10-digit phone number" style="font-size: 0.9rem;" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small mb-1">What are you looking for?</label>
+                            <textarea asp-for="Message" class="form-control rounded-4 px-3" rows="3" placeholder="Mention design, pattern, event date, etc." style="font-size: 0.9rem;" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm py-2 mb-2" style="font-weight: 600; font-size: 0.9rem;">
+                            <i class="bi bi-send-fill me-1"></i>Submit Request
+                        </button>
+                        <a href="https://wa.me/919652848029" target="_blank" class="btn btn-outline-success w-100 rounded-pill py-2" style="font-weight: 600; font-size: 0.9rem;">
+                            <i class="bi bi-whatsapp me-2"></i>Direct WhatsApp Chat
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Card: Location & Map -->
+            <div class="col-lg-6 fade-up">
+                <div class="location-card p-3 p-md-4 h-100 bg-white rounded-4 shadow-sm border d-flex flex-column">
+                    <h5 class="fw-bold mb-2 text-dark"><i class="bi bi-geo-alt-fill me-2 text-danger"></i>Our Location in Gadwal</h5>
+                    <p class="mb-1 fw-bold text-dark" style="font-size: 0.95rem;">Manju Ladies Tailoring Centre</p>
+                    <p class="text-muted small mb-1"><i class="bi bi-geo me-1 text-primary"></i> Gandhi Chowk, Ashok Nagar, Ganjipeta, Gadwal, Telangana – 509125</p>
+                    <p class="text-muted small mb-3"><i class="bi bi-building me-1 text-primary"></i> <strong>Nearby Landmark:</strong> Pallavi Herbal Beauty Parlour</p>
+
+                    <div class="rounded-3 overflow-hidden mt-auto" style="height: 220px; border: 1px solid rgba(0,0,0,0.1);">
+                        <iframe 
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15335.539045618458!2d77.8016!3d16.2307!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb5c34e062e7371%3A0xc3baedf6620ca94e!2sGandhi%20Chowk%2C%20Gadwal%2C%20Telangana%20509125!5e0!3m2!1sen!2sin!4v1711394123567!5m2!1sen!2sin" 
+                          width="100%" height="220" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     IMAGE PREVIEW MODAL (FULL PREVIEW, ORDER ON WHATSAPP & SHARE)
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg" style="background: rgba(20,20,20,0.96);">
+            <div class="modal-header border-0 pb-0 d-flex justify-content-between align-items-center">
+                <span id="modalCategoryBadge" class="badge rounded-pill px-3 py-2 text-white" style="background: var(--primary-color);"></span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-3">
+                <img id="modalImage" src="" alt="Full Design Preview" class="img-fluid rounded-3" style="max-height: 65vh; width: auto; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 justify-content-center gap-2">
+                <button type="button" id="modalWhatsAppBtn" class="btn btn-success rounded-pill px-4 py-2" style="font-weight: 600; font-size: 0.9rem;" onclick="orderCurrentModalImage()">
+                    <i class="bi bi-whatsapp me-2"></i>Order on WhatsApp
+                </button>
+                <button type="button" class="btn btn-light rounded-pill px-4 py-2" style="font-weight: 600; color: #222; font-size: 0.9rem;" onclick="shareCurrentModalImage()">
+                    <i class="bi bi-share-fill me-2" style="color: var(--primary-color);"></i>Share Design
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification for link copied fallback -->
+<div class="position-fixed bottom-0 start-50 translate-middle-x p-3 mb-5" style="z-index: 1080;">
+    <div id="shareToast" class="toast align-items-center text-white bg-dark border-0 rounded-pill px-3" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body small">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>Design link copied to clipboard!
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let currentModalImgUrl = '';
+    let currentModalCategory = '';
+    let currentPhotoId = null;
+
+    function toAbsoluteUrl(url) {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://')) return url;
+        return window.location.origin + (url.startsWith('/') ? url : '/' + url);
+    }
+
+    function openImageModal(imgUrl, category, title, photoId) {
+        currentModalImgUrl = imgUrl;
+        currentModalCategory = category || 'Design';
+        currentPhotoId = photoId || null;
+
+        document.getElementById('modalImage').src = imgUrl;
+        document.getElementById('modalCategoryBadge').textContent = category;
+
+        new bootstrap.Modal(document.getElementById('imageModal')).show();
+    }
+
+    function orderCurrentModalImage() {
+        const fullImg = toAbsoluteUrl(currentModalImgUrl);
+        const designPageUrl = currentPhotoId 
+            ? `${window.location.origin}/Home/Design?id=${currentPhotoId}`
+            : `${window.location.origin}/Home/Design?img=${encodeURIComponent(fullImg)}&cat=${encodeURIComponent(currentModalCategory)}`;
+
+        const message = `Hello Shankaramma garu! I liked this ${currentModalCategory} design from Manju Ladies Tailoring:\n\n${fullImg}\n\nView design details: ${designPageUrl}\n\nPlease let me know the stitching details and price!`;
+        window.open(`https://wa.me/919652848029?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    function shareCurrentModalImage() {
+        const fullImg = toAbsoluteUrl(currentModalImgUrl);
+        const designPageUrl = currentPhotoId 
+            ? `${window.location.origin}/Home/Design?id=${currentPhotoId}`
+            : `${window.location.origin}/Home/Design?img=${encodeURIComponent(fullImg)}&cat=${encodeURIComponent(currentModalCategory)}`;
+
+        const shareData = {
+            title: `Manju Ladies Tailoring - ${currentModalCategory}`,
+            text: `Check out this gorgeous ${currentModalCategory} design from Manju Ladies Tailoring Centre, Gadwal:`,
+            url: designPageUrl
+        };
+
+        if (navigator.share) {
+            navigator.share(shareData).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(designPageUrl).then(() => {
+                const toastEl = document.getElementById('shareToast');
+                if (toastEl) new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+            }).catch(() => {
+                window.open(`https://wa.me/?text=${encodeURIComponent(shareData.text + ' ' + designPageUrl)}`, '_blank');
+            });
+        }
+    }
+
+    function filterGallery(category, button) {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active-filter');
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.classList.add('btn-outline-secondary');
+        });
+
+        button.classList.add('active-filter');
+        button.classList.remove('btn-outline-secondary');
+        button.style.background = 'var(--primary-color)';
+        button.style.color = 'white';
+
+        const cards = document.querySelectorAll('#galleryGrid .gallery-card');
+        cards.forEach(card => {
+            const cardCat = card.getAttribute('data-category');
+            if (category === 'all' || cardCat === category) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+}
