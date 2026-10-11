@@ -2,7 +2,8 @@
 @{
     ViewData["Title"] = "Admin Dashboard";
     Layout = null;
-    var categories = new[] { "Designer Blouse", "Normal Blouse", "Kids Frocks & Dresses", "Pattu Langa / Half Saree", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
+    var categoriesList = ViewBag.CategoriesList as List<ManjuTailoringCentre.Models.CategoryItem> ?? new List<ManjuTailoringCentre.Models.CategoryItem>();
+    var categoryNames = categoriesList.Select(c => c.Name).ToList();
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -26,14 +27,14 @@
         .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.2); color: white; }
         .main-content { margin-left: 240px; padding: 2rem; }
         .stat-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(194,24,91,0.06); border: 1px solid rgba(194,24,91,0.08); }
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.25rem; }
-        .photo-item { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; }
-        .photo-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-        .photo-item:hover img { transform: scale(1.05); }
-        .photo-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 1rem 0.75rem 0.75rem; color: white; }
-        .photo-overlay small { opacity: 0.9; font-size: 0.8rem; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1.25rem; }
+        .photo-item { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); background: white; border: 1px solid rgba(0,0,0,0.06); }
+        .photo-thumb-wrap { position: relative; aspect-ratio: 1; overflow: hidden; background: #eee; }
+        .photo-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .photo-item:hover .photo-thumb-wrap img { transform: scale(1.05); }
         .delete-btn { position: absolute; top: 10px; right: 10px; background: #e53935; border: 2px solid white; color: white; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s, background 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.35); z-index: 5; opacity: 1; }
         .delete-btn:hover { background: #b71c1c; transform: scale(1.15); }
+        .photo-details { padding: 0.75rem; background: white; }
         .preview-thumb-wrap { position: relative; display: inline-block; margin: 4px; }
         .preview-thumb { width: 85px; height: 85px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.15); display: block; }
         .preview-remove-btn { position: absolute; top: -8px; right: -8px; background: #e53935; border: 2px solid white; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
@@ -51,6 +52,7 @@
             <i class="bi bi-scissors me-2"></i>MLTC Admin
         </div>
         <a href="/admin" class="active"><i class="bi bi-images me-2"></i>Gallery</a>
+        <a href="#categorySection"><i class="bi bi-tags me-2"></i>Categories</a>
         <a href="/" target="_blank"><i class="bi bi-globe me-2"></i>View Website</a>
         <form method="post" asp-action="Logout" class="mt-auto" style="margin-top: auto !important;">
             <button type="submit" class="btn text-white w-100 text-start ps-3" style="background:none; border:none; color: rgba(255,255,255,0.85); font-weight: 500;">
@@ -72,20 +74,20 @@
             </div>
             <div class="col-md-4">
                 <div class="stat-card">
-                    <h3 class="fw-bold" style="color: var(--primary);">@Model.Select(p => p.Category).Distinct().Count()</h3>
-                    <p class="mb-0 text-muted">Active Categories</p>
+                    <h3 class="fw-bold" style="color: var(--primary);">@categoriesList.Count</h3>
+                    <p class="mb-0 text-muted">Available Categories</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <h3 class="fw-bold mb-0" style="color: var(--accent);">@(ViewBag.StorageUsedMB ?? 0) MB</h3>
-                        <span class="badge bg-light text-muted border">of 5 GB Max</span>
+                        <span class="badge bg-light text-muted border">of 25 GB Cloud Storage</span>
                     </div>
                     <div class="progress mt-2" style="height: 6px;">
                         <div class="progress-bar" role="progressbar" style="width: @(ViewBag.StoragePercentage ?? 0)%; background: var(--primary);"></div>
                     </div>
-                    <small class="text-muted mt-1 d-block">Used: @(ViewBag.StoragePercentage ?? 0)% · Plenty of space left!</small>
+                    <small class="text-muted mt-1 d-block">Used: @(ViewBag.StoragePercentage ?? 0)% of 25,000 MB Cloudinary storage</small>
                 </div>
             </div>
         </div>
@@ -107,7 +109,7 @@
         }
 
         <!-- Upload Section -->
-        <div class="card border-0 rounded-4 shadow-sm mb-5" style="overflow: hidden;">
+        <div class="card border-0 rounded-4 shadow-sm mb-4" style="overflow: hidden;">
             <div class="card-header py-3" style="background: var(--primary); color: white;">
                 <h5 class="mb-0"><i class="bi bi-cloud-upload me-2"></i>Upload Design Photos</h5>
             </div>
@@ -117,7 +119,7 @@
                         <div class="col-md-5">
                             <label class="form-label fw-bold">Select Category</label>
                             <select name="category" class="form-select form-select-lg rounded-pill">
-                                @foreach (var cat in categories)
+                                @foreach (var cat in categoryNames)
                                 {
                                     <option value="@cat">@cat</option>
                                 }
@@ -137,15 +139,50 @@
                                     style="background: var(--primary);">
                                 <i class="bi bi-cloud-upload me-2"></i>Upload Photos
                             </button>
-                            <small class="text-muted ms-3">Select up to 20 photos at once · JPG, PNG, or WebP</small>
+                            <small class="text-muted ms-3">Select up to 20 photos at once · Auto saved to Cloudinary (25 GB)</small>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Gallery Grid -->
-        <h5 class="mb-3 fw-bold"><i class="bi bi-images me-2"></i>All Gallery Photos (@Model.Count)</h5>
+        <!-- Manage Categories Section (Add / Remove Category Dropdowns) -->
+        <div class="card border-0 rounded-4 shadow-sm mb-5" id="categorySection">
+            <div class="card-header py-3 bg-white border-bottom">
+                <h5 class="mb-0 fw-bold" style="color: var(--primary);"><i class="bi bi-tags me-2"></i>Manage Categories (Dropdowns)</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" asp-action="AddCategory" class="row g-2 align-items-center mb-3">
+                    <div class="col-auto">
+                        <input type="text" name="categoryName" class="form-control rounded-pill px-3" placeholder="New Category Name (e.g. Silk Lehengas)" required />
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 text-white" style="background: var(--primary);">
+                            <i class="bi bi-plus-circle me-1"></i>Add New Category
+                        </button>
+                    </div>
+                </form>
+
+                <div class="d-flex flex-wrap gap-2 pt-2">
+                    @foreach (var c in categoriesList)
+                    {
+                        <span class="badge bg-light text-dark border px-3 py-2 rounded-pill d-inline-flex align-items-center">
+                            <span class="me-2 fw-normal">@c.Name</span>
+                            <form method="post" asp-action="DeleteCategory" onsubmit="return confirm('Delete category \'@c.Name\'?');" class="d-inline m-0">
+                                <input type="hidden" name="id" value="@c.Id" />
+                                <button type="submit" class="btn btn-link p-0 text-danger border-0" style="font-size: 12px; line-height: 1;" title="Delete this category">✖</button>
+                            </form>
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Grid with In-Place Category Editing -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-images me-2"></i>All Gallery Photos (@Model.Count)</h5>
+            <small class="text-muted">Tip: Change the category dropdown under any photo to move it immediately</small>
+        </div>
 
         @if (!Model.Any())
         {
@@ -160,18 +197,28 @@
                 @foreach (var photo in Model)
                 {
                     <div class="photo-item">
-                        <img src="@photo.ImageUrl" alt="@photo.Title" loading="lazy" />
-                        <div class="photo-overlay">
-                            <h6>@photo.Title</h6>
-                            <small><i class="bi bi-tag me-1"></i>@photo.Category</small>
+                        <div class="photo-thumb-wrap">
+                            <img src="@photo.ImageUrl" alt="@photo.Category" loading="lazy" />
+                            <form method="post" asp-action="Delete"
+                                  onsubmit="return confirm('Delete this photo? This cannot be undone.')">
+                                <input type="hidden" name="id" value="@photo.Id" />
+                                <button type="submit" class="delete-btn" title="Delete photo">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
                         </div>
-                        <form method="post" asp-action="Delete"
-                              onsubmit="return confirm('Delete \'@photo.Title\'? This cannot be undone.')">
-                            <input type="hidden" name="id" value="@photo.Id" />
-                            <button type="submit" class="delete-btn" title="Delete photo">
-                                <i class="bi bi-trash3"></i>
-                            </button>
-                        </form>
+                        <div class="photo-details">
+                            <form method="post" asp-action="UpdatePhotoCategory" class="d-flex gap-1 align-items-center">
+                                <input type="hidden" name="photoId" value="@photo.Id" />
+                                <select name="newCategory" class="form-select form-select-sm rounded-pill" onchange="this.form.submit()" title="Change Category">
+                                    @foreach (var cat in categoryNames)
+                                    {
+                                        <option value="@cat" selected="@(photo.Category == cat ? "selected" : null)">@cat</option>
+                                    }
+                                </select>
+                            </form>
+                            <small class="text-muted d-block text-center mt-1" style="font-size: 11px;">Select above to move</small>
+                        </div>
                     </div>
                 }
             </div>

@@ -75,6 +75,20 @@ namespace ManjuTailoringCentre.Controllers
                 .OrderByDescending(p => p.UploadedAt)
                 .ToListAsync();
 
+            // Seed default categories if none exist yet
+            if (!await _db.Categories.AnyAsync())
+            {
+                var defaults = new[] { "Designer Blouse", "Normal Blouse", "Kids Frocks & Dresses", "Pattu Langa / Half Saree", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
+                foreach (var d in defaults)
+                {
+                    _db.Categories.Add(new CategoryItem { Name = d });
+                }
+                await _db.SaveChangesAsync();
+            }
+
+            var categories = await _db.Categories.OrderBy(c => c.Name).ToListAsync();
+            ViewBag.CategoriesList = categories;
+
             // Calculate storage used on disk in wwwroot/uploads
             long totalBytes = 0;
             var uploadsPath = Path.Combine(env.WebRootPath, "uploads");
@@ -84,11 +98,16 @@ namespace ManjuTailoringCentre.Controllers
                 totalBytes = dirInfo.GetFiles().Sum(f => f.Length);
             }
 
-            // Convert to human readable MB or KB
+            // If using Cloudinary or disk, estimate average photo size ~1.2MB if only on cloud
+            if (totalBytes == 0 && photos.Count > 0)
+            {
+                totalBytes = photos.Count * (long)(1.2 * 1024 * 1024);
+            }
+
             double totalMB = Math.Round((double)totalBytes / (1024 * 1024), 2);
             ViewBag.StorageUsedMB = totalMB;
-            ViewBag.StorageLimitGB = 5; // 5 GB limit target
-            ViewBag.StoragePercentage = Math.Min(100, Math.Round((totalMB / (5 * 1024)) * 100, 2));
+            ViewBag.StorageLimitGB = 25; // Cloudinary free plan provides 25 GB
+            ViewBag.StoragePercentage = Math.Min(100, Math.Round((totalMB / (25.0 * 1024)) * 100, 2));
 
             return View(photos);
         }
@@ -167,8 +186,61 @@ namespace ManjuTailoringCentre.Controllers
             return RedirectToAction("Dashboard");
         }
 
-        // ─── DELETE ───────────────────────────────────────────────────────────
+        // ─── UPDATE PHOTO CATEGORY ───────────────────────────────────────────
+        [AdminOnly]
+        [HttpPost]
+        public async Task<IActionResult> UpdatePhotoCategory(int photoId, string newCategory)
+        {
+            var photo = await _db.GalleryPhotos.FindAsync(photoId);
+            if (photo != null && !string.IsNullOrWhiteSpace(newCategory))
+            {
+                photo.Category = newCategory.Trim();
+                photo.Title = newCategory.Trim();
+                await _db.SaveChangesAsync();
+                TempData["Success"] = "Photo category updated successfully!";
+            }
+            return RedirectToAction("Dashboard");
+        }
 
+        // ─── ADD NEW CATEGORY ─────────────────────────────────────────────────
+        [AdminOnly]
+        [HttpPost]
+        public async Task<IActionResult> AddCategory(string categoryName)
+        {
+            if (!string.IsNullOrWhiteSpace(categoryName))
+            {
+                var cleanName = categoryName.Trim();
+                var exists = await _db.Categories.AnyAsync(c => c.Name.ToLower() == cleanName.ToLower());
+                if (!exists)
+                {
+                    _db.Categories.Add(new CategoryItem { Name = cleanName });
+                    await _db.SaveChangesAsync();
+                    TempData["Success"] = $"Category '{cleanName}' added successfully!";
+                }
+                else
+                {
+                    TempData["Error"] = $"Category '{cleanName}' already exists.";
+                }
+            }
+            return RedirectToAction("Dashboard");
+        }
+
+        // ─── DELETE CATEGORY ──────────────────────────────────────────────────
+        [AdminOnly]
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var cat = await _db.Categories.FindAsync(id);
+            if (cat != null)
+            {
+                _db.Categories.Remove(cat);
+                await _db.SaveChangesAsync();
+                TempData["Success"] = $"Category '{cat.Name}' deleted.";
+            }
+            return RedirectToAction("Dashboard");
+        }
+
+        // ─── DELETE PHOTO ─────────────────────────────────────────────────────
         [AdminOnly]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
@@ -190,7 +262,7 @@ namespace ManjuTailoringCentre.Controllers
                 _db.GalleryPhotos.Remove(photo);
                 await _db.SaveChangesAsync();
 
-                TempData["Success"] = $"'{photo.Title}' deleted successfully.";
+                TempData["Success"] = $"Photo deleted successfully.";
             }
             catch (Exception ex)
             {
