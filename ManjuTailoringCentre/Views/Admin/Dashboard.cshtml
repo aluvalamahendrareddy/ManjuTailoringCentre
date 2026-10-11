@@ -26,7 +26,7 @@
         .sidebar a { color: rgba(255,255,255,0.85); text-decoration: none; display: block; padding: 0.65rem 1rem; border-radius: 10px; margin-bottom: 0.5rem; transition: 0.2s; font-weight: 500; }
         .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.2); color: white; }
         .main-content { margin-left: 240px; padding: 2rem; }
-        .stat-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(194,24,91,0.06); border: 1px solid rgba(194,24,91,0.08); }
+        .stat-card { background: white; border-radius: 16px; padding: 1.25rem 1rem; box-shadow: 0 4px 20px rgba(194,24,91,0.06); border: 1px solid rgba(194,24,91,0.08); height: 100%; min-height: 82px; }
         .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1.25rem; }
         .photo-item { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); background: white; border: 1px solid rgba(0,0,0,0.06); transition: border-color 0.2s; }
         .photo-item.selected { border: 2px solid var(--primary) !important; box-shadow: 0 0 10px rgba(194,24,91,0.25) !important; }
@@ -156,16 +156,16 @@
     <!-- Main Content -->
     <div class="main-content">
 
-        <!-- Stats Row -->
-        <div class="row g-2 g-md-3 mb-3 mb-md-4">
-            <div class="col-4 col-md-4">
-                <div class="stat-card p-2 p-md-3 text-center text-md-start">
+        <!-- Stats Row (Equal height and width for all 3 cards) -->
+        <div class="row g-2 g-md-3 mb-3 mb-md-4 align-items-stretch">
+            <div class="col-4 col-md-4 d-flex">
+                <div class="stat-card w-100 p-2 p-md-3 text-center text-md-start d-flex flex-column justify-content-center">
                     <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.1rem, 3.8vw, 1.7rem);">@Model.Count</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.75rem;">Total Photos</p>
                 </div>
             </div>
-            <div class="col-4 col-md-4">
-                <div class="stat-card p-2 p-md-3 text-center text-md-start">
+            <div class="col-4 col-md-4 d-flex">
+                <div class="stat-card w-100 p-2 p-md-3 text-center text-md-start d-flex flex-column justify-content-center">
                     <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.1rem, 3.8vw, 1.7rem);">@categoryNames.Count</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.75rem;">Categories</p>
                 </div>
@@ -176,9 +176,9 @@
                 var usedGb = usedMb / 1024.0;
                 var storageDisplay = usedGb < 0.05 ? "0.01 / 25 GB" : $"{usedGb:0.1} / 25 GB";
             }
-            <div class="col-4 col-md-4">
-                <div class="stat-card p-2 p-md-3 text-center text-md-start" title="@(ViewBag.StorageUsedMB ?? 10) MB used of 25 GB">
-                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(0.92rem, 3.2vw, 1.5rem); white-space: nowrap;">@storageDisplay</h3>
+            <div class="col-4 col-md-4 d-flex">
+                <div class="stat-card w-100 p-2 p-md-3 text-center text-md-start d-flex flex-column justify-content-center" title="@(ViewBag.StorageUsedMB ?? 10) MB used of 25 GB">
+                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(0.95rem, 3.2vw, 1.6rem); white-space: nowrap;">@storageDisplay</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.75rem;">Storage</p>
                 </div>
             </div>

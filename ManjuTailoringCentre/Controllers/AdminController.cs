@@ -236,7 +236,7 @@ namespace ManjuTailoringCentre.Controllers
                     await _storageService.UpdateImageCategoryAsync(photo.CloudinaryPublicId, clean);
                 }
 
-                TempData["Success"] = $"Photo moved to '{clean}' and synced to cloud!";
+                TempData["Success"] = $"Moved to '{clean}'!";
             }
             return RedirectToAction("Dashboard");
         }

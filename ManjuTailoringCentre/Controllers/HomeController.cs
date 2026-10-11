@@ -135,7 +135,15 @@ namespace ManjuTailoringCentre.Controllers
         {
             if (ModelState.IsValid && !string.IsNullOrWhiteSpace(model.Name) && !string.IsNullOrWhiteSpace(model.Phone))
             {
-                await emailService.SendAppointmentNotificationAsync(model.Name, model.Phone, model.Message);
+                // Dispatch email in background so user form response is instantaneous (no network blocking)
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await emailService.SendAppointmentNotificationAsync(model.Name, model.Phone, model.Message);
+                    }
+                    catch { }
+                });
 
                 TempData["SuccessMessage"] = "Thank you! Your request has been received. We will contact you soon.";
                 return Redirect("/#contact");
