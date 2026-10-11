@@ -147,12 +147,33 @@
         </a>
     </nav>
 
+    <!-- Global Floating Toast Notification (Replaces in-page banner on Laptop and Mobile) -->
+    @if (TempData["SuccessMessage"] != null || TempData["ErrorMessage"] != null)
+    {
+        <div class="toast-container position-fixed start-50 translate-middle-x p-2" style="z-index: 2050; bottom: 70px; width: max-content; max-width: 92vw;">
+            <div id="siteToast" class="toast align-items-center text-white @(TempData["SuccessMessage"] != null ? "bg-success" : "bg-danger") border-0 rounded-pill px-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex align-items-center">
+                    <div class="toast-body fw-bold py-2 px-1 text-center" style="font-size: 0.88rem; line-height: 1.3;">
+                        <i class="bi @(TempData["SuccessMessage"] != null ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill") me-2"></i>@(TempData["SuccessMessage"] ?? TempData["ErrorMessage"])
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         // Smooth scroll spy for SPA top and mobile nav
         document.addEventListener('DOMContentLoaded', function () {
+            // Auto show floating toast notification
+            const siteToast = document.getElementById('siteToast');
+            if (siteToast) {
+                new bootstrap.Toast(siteToast, { delay: 4500 }).show();
+            }
+
             const sections = document.querySelectorAll('section[id]');
             const topNavLinks = document.querySelectorAll('.navbar-nav .nav-link');
             const mobNavHome = document.getElementById('mob-nav-home');

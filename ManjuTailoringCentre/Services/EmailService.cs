@@ -21,14 +21,45 @@ namespace ManjuTailoringCentre.Services
         {
             try
             {
+                // Method 1: Web3Forms API (Passwordless, zero SMTP setup - recommended for accounts using Google Passkeys)
+                var web3Key = _config["Web3Forms:AccessKey"] ?? _config["Web3Forms__AccessKey"];
+                if (!string.IsNullOrWhiteSpace(web3Key))
+                {
+                    using var httpClient = new HttpClient();
+                    var payload = new Dictionary<string, string>
+                    {
+                        { "access_key", web3Key },
+                        { "subject", $"✨ New Tailoring Request: {customerName} ({customerPhone})" },
+                        { "from_name", "Manju Ladies Tailoring" },
+                        { "to_email", AdminEmail },
+                        { "Customer Name", customerName },
+                        { "Phone Number", customerPhone },
+                        { "Direct WhatsApp Chat", $"https://wa.me/91{customerPhone}" },
+                        { "Requirement / Message", message },
+                        { "Received At", $"{DateTime.UtcNow.AddHours(5.5):dd MMM yyyy, hh:mm tt} IST" }
+                    };
+
+                    var response = await httpClient.PostAsync("https://api.web3forms.com/submit", new FormUrlEncodedContent(payload));
+                    if (response.IsSuccessStatusCode)
+                    {
+                        _logger.LogInformation("Successfully sent appointment notification via Web3Forms to {AdminEmail} for {Customer}", AdminEmail, customerName);
+                        return true;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Web3Forms response status code: {Status}", response.StatusCode);
+                    }
+                }
+
+                // Method 2: Gmail / Custom SMTP Client
                 var smtpHost = _config["Smtp:Host"] ?? "smtp.gmail.com";
                 var smtpPort = int.TryParse(_config["Smtp:Port"], out var port) ? port : 587;
-                var smtpUser = _config["Smtp:Username"];
-                var smtpPass = _config["Smtp:Password"];
+                var smtpUser = _config["Smtp:Username"] ?? _config["Smtp__Username"];
+                var smtpPass = _config["Smtp:Password"] ?? _config["Smtp__Password"];
 
                 if (string.IsNullOrWhiteSpace(smtpUser) || string.IsNullOrWhiteSpace(smtpPass))
                 {
-                    _logger.LogWarning("SMTP credentials not configured. Appointment request logged for {Name} ({Phone}): {Message}", customerName, customerPhone, message);
+                    _logger.LogWarning("Email credentials not configured. Appointment request logged for {Name} ({Phone}): {Message}", customerName, customerPhone, message);
                     return false;
                 }
 

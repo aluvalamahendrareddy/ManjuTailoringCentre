@@ -235,7 +235,7 @@
                 @if(reviews != null) {
                     for(int i=0; i < reviews.Count; i++) {
                         <div class="carousel-item @(i == 0 ? "active" : "")">
-                            <div class="review-item text-center mx-auto" style="max-width: 600px; padding: 1.25rem; margin: 0.5rem auto;">
+                            <div class="review-item text-center mx-auto" style="max-width: 650px;">
                                 <i class="bi bi-quote fs-2" style="color: var(--accent-color);"></i>
                                 <p class="mt-1" style="font-size: 0.95rem;">"@reviews[i].Comment"</p>
                                 <div class="mt-2">
@@ -269,21 +269,6 @@
             <h2 class="mt-2 fw-bold" style="font-size: clamp(1.4rem, 5vw, 2.3rem);">Visit or Call Us</h2>
             <p class="text-muted small mb-0">We're located in the heart of Gadwal. Come by for a consultation or reach out on WhatsApp.</p>
         </div>
-
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show rounded-pill px-4 text-center mb-3" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show rounded-pill px-4 text-center mb-3" role="alert">
-                <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
 
         <div class="row g-3 g-md-4 align-items-stretch">
             <!-- Left Card: Message Form -->

@@ -170,11 +170,16 @@
                     <p class="mb-0 text-muted" style="font-size: 0.75rem;">Categories</p>
                 </div>
             </div>
-            <!-- Item 1: Storage Card showing MB / 25 GB like C drive -->
+            <!-- Storage Card: Red font matching other cards, compact GB display, 'Storage' label -->
+            @{
+                var usedMb = (double)(ViewBag.StorageUsedMB ?? 10);
+                var usedGb = usedMb / 1024.0;
+                var storageDisplay = usedGb < 0.05 ? "0.01 / 25 GB" : $"{usedGb:0.1} / 25 GB";
+            }
             <div class="col-4 col-md-4">
-                <div class="stat-card p-2 p-md-3 text-center text-md-start">
-                    <h3 class="fw-bold mb-0" style="color: var(--accent); font-size: clamp(0.95rem, 3.5vw, 1.5rem); white-space: nowrap;">@(ViewBag.StorageUsedMB ?? 0) MB / 25 GB</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Cloud Storage</p>
+                <div class="stat-card p-2 p-md-3 text-center text-md-start" title="@(ViewBag.StorageUsedMB ?? 10) MB used of 25 GB">
+                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(0.92rem, 3.2vw, 1.5rem); white-space: nowrap;">@storageDisplay</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Storage</p>
                 </div>
             </div>
         </div>
