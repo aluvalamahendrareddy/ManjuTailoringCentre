@@ -131,14 +131,16 @@ namespace ManjuTailoringCentre.Controllers
         public IActionResult Contact() => Redirect("/#contact");
 
         [HttpPost]
-        public IActionResult Contact(ContactFormViewModel model)
+        public async Task<IActionResult> Contact(ContactFormViewModel model, [FromServices] IEmailService emailService)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && !string.IsNullOrWhiteSpace(model.Name) && !string.IsNullOrWhiteSpace(model.Phone))
             {
-                TempData["SuccessMessage"] = "Message received! We will get back to you soon.";
+                await emailService.SendAppointmentNotificationAsync(model.Name, model.Phone, model.Message);
+
+                TempData["SuccessMessage"] = "Thank you! Your request has been received. We will contact you soon.";
                 return Redirect("/#contact");
             }
-            TempData["ErrorMessage"] = "Please provide all required fields.";
+            TempData["ErrorMessage"] = "Please provide your name and phone number.";
             return Redirect("/#contact");
         }
 

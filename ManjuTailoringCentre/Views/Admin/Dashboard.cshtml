@@ -20,7 +20,7 @@
             --accent: #d4af37;  /* Warm Gold */
             --bg-light: #fff7f9;
         }
-        body { background: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg-light); font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; }
         .sidebar { background: var(--primary); min-height: 100vh; width: 240px; position: fixed; top: 0; left: 0; z-index: 100; padding: 2rem 1rem; }
         .sidebar .brand { color: white; font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 1rem; margin-bottom: 1.5rem; }
         .sidebar a { color: rgba(255,255,255,0.85); text-decoration: none; display: block; padding: 0.65rem 1rem; border-radius: 10px; margin-bottom: 0.5rem; transition: 0.2s; font-weight: 500; }
@@ -28,7 +28,8 @@
         .main-content { margin-left: 240px; padding: 2rem; }
         .stat-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(194,24,91,0.06); border: 1px solid rgba(194,24,91,0.08); }
         .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1.25rem; }
-        .photo-item { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); background: white; border: 1px solid rgba(0,0,0,0.06); }
+        .photo-item { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); background: white; border: 1px solid rgba(0,0,0,0.06); transition: border-color 0.2s; }
+        .photo-item.selected { border: 2px solid var(--primary) !important; box-shadow: 0 0 10px rgba(194,24,91,0.25) !important; }
         .photo-thumb-wrap { position: relative; aspect-ratio: 1; overflow: hidden; background: #eee; }
         .photo-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
         .photo-item:hover .photo-thumb-wrap img { transform: scale(1.05); }
@@ -123,7 +124,7 @@
                 font-size: 10px !important;
             }
             .stat-card {
-                padding: 1rem !important;
+                padding: 0.75rem 0.5rem !important;
             }
         }
     </style>
@@ -159,24 +160,24 @@
         <div class="row g-2 g-md-3 mb-3 mb-md-4">
             <div class="col-4 col-md-4">
                 <div class="stat-card p-2 p-md-3 text-center text-md-start">
-                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.2rem, 4vw, 1.8rem);">@Model.Count</h3>
+                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.1rem, 3.8vw, 1.7rem);">@Model.Count</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.75rem;">Total Photos</p>
                 </div>
             </div>
             <div class="col-4 col-md-4">
                 <div class="stat-card p-2 p-md-3 text-center text-md-start">
-                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.2rem, 4vw, 1.8rem);">@categoryNames.Count</h3>
+                    <h3 class="fw-bold mb-0" style="color: var(--primary); font-size: clamp(1.1rem, 3.8vw, 1.7rem);">@categoryNames.Count</h3>
                     <p class="mb-0 text-muted" style="font-size: 0.75rem;">Categories</p>
                 </div>
             </div>
+            <!-- Item 1: Storage Card showing MB / 25 GB like C drive -->
             <div class="col-4 col-md-4">
                 <div class="stat-card p-2 p-md-3 text-center text-md-start">
-                    <h3 class="fw-bold mb-0" style="color: var(--accent); font-size: clamp(1.2rem, 4vw, 1.8rem);">@(ViewBag.StorageUsedMB ?? 0) MB</h3>
-                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Used of 25 GB</p>
+                    <h3 class="fw-bold mb-0" style="color: var(--accent); font-size: clamp(0.95rem, 3.5vw, 1.5rem); white-space: nowrap;">@(ViewBag.StorageUsedMB ?? 0) MB / 25 GB</h3>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Cloud Storage</p>
                 </div>
             </div>
         </div>
-
 
         <!-- Upload Section (Compact & Intuitive) -->
         <div class="card border-0 rounded-4 shadow-sm mb-3 mb-md-4" style="overflow: hidden;">
@@ -242,53 +243,78 @@
             </div>
         </div>
 
-        <!-- Gallery Grid with In-Place Category Editing -->
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="mb-0 fw-bold" id="adminGalleryHeader"><i class="bi bi-images me-1"></i>Gallery Photos (@Model.Count)</h6>
-            <small class="text-muted small d-none d-md-block">Tip: Change the dropdown below any photo to reassign or move it</small>
-        </div>
-
-        @if (!Model.Any())
-        {
-            <div class="text-center py-5">
-                <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
-                <p class="text-muted mt-3">No photos uploaded yet. Upload your first design above!</p>
+        <!-- Item 3: Bulk Delete Form & Gallery Grid with Multi-Select -->
+        <form method="post" asp-action="DeleteMultiple" id="bulkDeleteForm" onsubmit="return confirmBulkDelete();">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <h6 class="mb-0 fw-bold" id="adminGalleryHeader"><i class="bi bi-images me-1"></i>Gallery Photos (@Model.Count)</h6>
+                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0" style="font-size: 0.75rem;" onclick="toggleSelectAll()">
+                        <span id="selectAllText">Select All</span>
+                    </button>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="submit" id="deleteSelectedBtn" class="btn btn-sm btn-danger rounded-pill px-3 py-1 d-none" style="font-size: 0.78rem; font-weight: 600;">
+                        <i class="bi bi-trash3-fill me-1"></i>Delete Selected (<span id="selectedCountBadge">0</span>)
+                    </button>
+                    <small class="text-muted small d-none d-md-block">Tip: Check boxes to delete multiple</small>
+                </div>
             </div>
-        }
-        else
-        {
-            <!-- Photo Grid: 3 images per row on mobile, auto-fill on desktop -->
-            <div class="photo-grid" id="adminPhotoGrid">
-                @foreach (var photo in Model)
-                {
-                    <div class="photo-item" data-category="@photo.Category">
-                        <div class="photo-thumb-wrap">
-                            <img src="@photo.ImageUrl" alt="@photo.Category" loading="lazy" />
-                            <form method="post" asp-action="Delete"
-                                  onsubmit="return confirm('Delete this photo? This cannot be undone.')">
-                                <input type="hidden" name="id" value="@photo.Id" />
-                                <button type="submit" class="delete-btn" title="Delete photo">
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
+                    <p class="text-muted mt-3">No photos uploaded yet. Upload your first design above!</p>
+                </div>
+            }
+            else
+            {
+                <!-- Photo Grid: 3 images per row on mobile, auto-fill on desktop -->
+                <div class="photo-grid" id="adminPhotoGrid">
+                    @foreach (var photo in Model)
+                    {
+                        <div class="photo-item" data-category="@photo.Category" id="photo-card-@photo.Id">
+                            <div class="photo-thumb-wrap">
+                                <!-- Multi-select checkbox -->
+                                <div class="position-absolute top-0 start-0 m-1" style="z-index: 6;">
+                                    <input type="checkbox" name="ids" value="@photo.Id" class="photo-select-checkbox form-check-input" 
+                                           style="width: 20px; height: 20px; cursor: pointer; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.4);" 
+                                           onchange="updateBulkDeleteState()" />
+                                </div>
+                                <img src="@photo.ImageUrl" alt="@photo.Category" loading="lazy" />
+                                <button type="button" class="delete-btn" title="Delete photo" onclick="deleteSinglePhoto(@photo.Id)">
                                     <i class="bi bi-trash3"></i>
                                 </button>
-                            </form>
+                            </div>
+                            <div class="photo-details">
+                                <div class="d-flex align-items-center m-0">
+                                    <select class="form-select form-select-sm category-select-admin w-100" 
+                                            onchange="updateCategoryInPlace(@photo.Id, this.value)" title="Change Category">
+                                        @foreach (var cat in categoryNames)
+                                        {
+                                            <option value="@cat" selected="@(photo.Category == cat ? "selected" : null)">@cat</option>
+                                        }
+                                    </select>
+                                </div>
+                                <small class="text-muted d-block text-center mt-1" style="font-size: 10px;">Select to move</small>
+                            </div>
                         </div>
-                        <div class="photo-details">
-                            <form method="post" asp-action="UpdatePhotoCategory" class="d-flex align-items-center m-0">
-                                <input type="hidden" name="photoId" value="@photo.Id" />
-                                <select name="newCategory" class="form-select form-select-sm category-select-admin w-100" onchange="this.form.submit()" title="Change Category">
-                                    @foreach (var cat in categoryNames)
-                                    {
-                                        <option value="@cat" selected="@(photo.Category == cat ? "selected" : null)">@cat</option>
-                                    }
-                                </select>
-                            </form>
-                            <small class="text-muted d-block text-center mt-1" style="font-size: 10px;">Select to move</small>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
+                    }
+                </div>
+            }
+        </form>
     </div>
+
+    <!-- Hidden form for single photo delete -->
+    <form method="post" asp-action="Delete" id="singleDeleteForm" style="display:none;">
+        <input type="hidden" name="id" id="singleDeleteId" />
+    </form>
+
+    <!-- Hidden form for in-place category update -->
+    <form method="post" asp-action="UpdatePhotoCategory" id="singleUpdateCategoryForm" style="display:none;">
+        <input type="hidden" name="photoId" id="updatePhotoId" />
+        <input type="hidden" name="newCategory" id="updateNewCategory" />
+    </form>
 
     <!-- Mobile Admin Bottom Navigation Bar -->
     <nav class="admin-bottom-nav d-md-none">
@@ -311,13 +337,14 @@
             </button>
         </form>
     </nav>
-    <!-- Single Floating Toast Notification (Never wraps, 1 line only) -->
+
+    <!-- Item 4: Floating Toast Notification (Centered, responsive, fits on all screens) -->
     @if (TempData["Success"] != null || TempData["Error"] != null)
     {
-        <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-2 mb-5 mb-md-3" style="z-index: 1090; width: max-content; max-width: 95vw;">
-            <div id="adminToast" class="toast align-items-center text-white @(TempData["Success"] != null ? "bg-success" : "bg-danger") border-0 rounded-pill px-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="white-space: nowrap;">
+        <div class="toast-container position-fixed start-50 translate-middle-x p-2" style="z-index: 2000; bottom: 70px; width: max-content; max-width: 92vw;">
+            <div id="adminToast" class="toast align-items-center text-white @(TempData["Success"] != null ? "bg-success" : "bg-danger") border-0 rounded-pill px-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex align-items-center">
-                    <div class="toast-body fw-bold py-2 px-1" style="white-space: nowrap; font-size: 0.88rem;">
+                    <div class="toast-body fw-bold py-2 px-1 text-center" style="font-size: 0.85rem; line-height: 1.3;">
                         <i class="bi @(TempData["Success"] != null ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill") me-2"></i>@(TempData["Success"] ?? TempData["Error"])
                     </div>
                     <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -335,6 +362,66 @@
                 toast.show();
             }
         });
+
+        // Bulk Delete selection logic
+        function updateBulkDeleteState() {
+            const checkboxes = document.querySelectorAll('.photo-select-checkbox:checked');
+            const count = checkboxes.length;
+            const btn = document.getElementById('deleteSelectedBtn');
+            const badge = document.getElementById('selectedCountBadge');
+
+            badge.textContent = count;
+            if (count > 0) {
+                btn.classList.remove('d-none');
+            } else {
+                btn.classList.add('d-none');
+            }
+
+            // Highlight selected card borders
+            document.querySelectorAll('.photo-select-checkbox').forEach(cb => {
+                const card = document.getElementById(`photo-card-${cb.value}`);
+                if (card) {
+                    if (cb.checked) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+        }
+
+        let isAllSelected = false;
+        function toggleSelectAll() {
+            const visibleCheckboxes = Array.from(document.querySelectorAll('#adminPhotoGrid .photo-item'))
+                .filter(item => item.style.display !== 'none')
+                .map(item => item.querySelector('.photo-select-checkbox'))
+                .filter(Boolean);
+
+            isAllSelected = !isAllSelected;
+            visibleCheckboxes.forEach(cb => cb.checked = isAllSelected);
+            document.getElementById('selectAllText').textContent = isAllSelected ? 'Deselect All' : 'Select All';
+            updateBulkDeleteState();
+        }
+
+        function confirmBulkDelete() {
+            const count = document.querySelectorAll('.photo-select-checkbox:checked').length;
+            if (count === 0) return false;
+            return confirm(`Are you sure you want to permanently delete ${count} selected photo(s)? This cannot be undone.`);
+        }
+
+        function deleteSinglePhoto(id) {
+            if (confirm('Delete this photo? This cannot be undone.')) {
+                document.getElementById('singleDeleteId').value = id;
+                document.getElementById('singleDeleteForm').submit();
+            }
+        }
+
+        function updateCategoryInPlace(photoId, newCategory) {
+            document.getElementById('updatePhotoId').value = photoId;
+            document.getElementById('updateNewCategory').value = newCategory;
+            document.getElementById('singleUpdateCategoryForm').submit();
+        }
+
         // Track selected files with DataTransfer so user can remove individual files with (X)
         let dt = new DataTransfer();
         const fileInput = document.getElementById('photosInput');
@@ -430,6 +517,11 @@
             } else {
                 header.innerHTML = `<i class="bi bi-images me-1"></i>${category} (${visibleCount})`;
             }
+
+            // Reset bulk selection
+            isAllSelected = false;
+            document.getElementById('selectAllText').textContent = 'Select All';
+            updateBulkDeleteState();
         }
     </script>
 </body>

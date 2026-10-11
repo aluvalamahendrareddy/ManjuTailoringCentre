@@ -107,9 +107,9 @@
         <!-- Categories Table with "+ Add Category" button in header -->
         <div class="card bg-white p-3 p-md-4 shadow-sm rounded-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="fw-bold mb-0">All Active Categories (@Model.Count)</h6>
-                <button type="button" class="btn btn-sm text-white rounded-pill px-3 py-1" style="background: var(--primary); font-weight: 600; font-size: 0.85rem;" onclick="openAddCategoryModal()">
-                    <i class="bi bi-plus-lg me-1"></i>Add Category
+                <h6 class="fw-bold mb-0">Categories (@Model.Count)</h6>
+                <button type="button" class="btn btn-sm text-white rounded-pill px-3 py-1 text-nowrap" style="background: var(--primary); font-weight: 600; font-size: 0.85rem;" onclick="openAddCategoryModal()">
+                    <i class="bi bi-plus-lg me-1"></i><span class="d-none d-sm-inline">Add </span>Category
                 </button>
             </div>
             <div class="table-responsive">
@@ -275,13 +275,13 @@
         </form>
     </nav>
 
-    <!-- Single Floating Toast Notification (Never wraps, 1 line only) -->
+    <!-- Single Floating Toast Notification (Responsive, fits in 1 line on desktop and mobile) -->
     @if (TempData["Success"] != null || TempData["Error"] != null)
     {
-        <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-2 mb-5 mb-md-3" style="z-index: 1090; width: max-content; max-width: 95vw;">
-            <div id="adminToast" class="toast align-items-center text-white @(TempData["Success"] != null ? "bg-success" : "bg-danger") border-0 rounded-pill px-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" style="white-space: nowrap;">
+        <div class="toast-container position-fixed start-50 translate-middle-x p-2" style="z-index: 2000; bottom: 70px; width: max-content; max-width: 92vw;">
+            <div id="adminToast" class="toast align-items-center text-white @(TempData["Success"] != null ? "bg-success" : "bg-danger") border-0 rounded-pill px-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex align-items-center">
-                    <div class="toast-body fw-bold py-2 px-1" style="white-space: nowrap; font-size: 0.88rem;">
+                    <div class="toast-body fw-bold py-2 px-1 text-center" style="font-size: 0.85rem; line-height: 1.3;">
                         <i class="bi @(TempData["Success"] != null ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill") me-2"></i>@(TempData["Success"] ?? TempData["Error"])
                     </div>
                     <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Close"></button>

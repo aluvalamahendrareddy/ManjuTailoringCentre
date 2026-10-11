@@ -350,7 +350,7 @@ namespace ManjuTailoringCentre.Controllers
                 }
 
                 await _db.SaveChangesAsync();
-                TempData["Success"] = $"Category renamed from '{oldName}' to '{trimmed}' (Updated {affectedPhotos.Count} photo(s)).";
+                TempData["Success"] = $"Category renamed to '{trimmed}'!";
             }
             return RedirectToAction("Categories");
         }
@@ -399,6 +399,49 @@ namespace ManjuTailoringCentre.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = $"Delete failed: {ex.Message}";
+            }
+
+            return RedirectToAction("Dashboard");
+        }
+
+        // ─── DELETE MULTIPLE PHOTOS (BULK DELETE) ─────────────────────────────
+        [AdminOnly]
+        [HttpPost]
+        public async Task<IActionResult> DeleteMultiple([FromForm] List<int> ids)
+        {
+            if (ids == null || !ids.Any())
+            {
+                TempData["Error"] = "Please select at least one photo to delete.";
+                return RedirectToAction("Dashboard");
+            }
+
+            int count = 0;
+            foreach (var id in ids)
+            {
+                var photo = await _db.GalleryPhotos.FindAsync(id);
+                if (photo != null)
+                {
+                    if (!string.IsNullOrEmpty(photo.CloudinaryPublicId))
+                    {
+                        try
+                        {
+                            await _storageService.DeleteImageAsync(photo.CloudinaryPublicId);
+                        }
+                        catch { }
+                    }
+                    _db.GalleryPhotos.Remove(photo);
+                    count++;
+                }
+            }
+
+            if (count > 0)
+            {
+                await _db.SaveChangesAsync();
+                TempData["Success"] = $"{count} photo(s) deleted successfully!";
+            }
+            else
+            {
+                TempData["Error"] = "Selected photos could not be found.";
             }
 
             return RedirectToAction("Dashboard");

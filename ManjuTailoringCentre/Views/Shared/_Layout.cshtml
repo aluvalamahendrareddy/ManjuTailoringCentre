@@ -129,13 +129,13 @@
             <i class="bi bi-house-door"></i>
             <span>Home</span>
         </a>
-        <a href="#gallery" class="nav-item-mobile" id="mob-nav-gallery">
-            <i class="bi bi-images"></i>
-            <span>Gallery</span>
-        </a>
         <a href="#services" class="nav-item-mobile" id="mob-nav-services">
             <i class="bi bi-scissors"></i>
             <span>Services</span>
+        </a>
+        <a href="#gallery" class="nav-item-mobile" id="mob-nav-gallery">
+            <i class="bi bi-images"></i>
+            <span>Gallery</span>
         </a>
         <a href="https://wa.me/919652848029" target="_blank" class="nav-item-mobile nav-wa-mobile">
             <i class="bi bi-whatsapp"></i>
@@ -188,9 +188,9 @@
                         }
                     });
 
-                    if (mobNavHome) mobNavHome.classList.toggle('active', current === 'home');
-                    if (mobNavGallery) mobNavGallery.classList.toggle('active', current === 'gallery');
+                    if (mobNavHome) mobNavHome.classList.toggle('active', current === 'home' || current === 'about');
                     if (mobNavServices) mobNavServices.classList.toggle('active', current === 'services');
+                    if (mobNavGallery) mobNavGallery.classList.toggle('active', current === 'gallery');
                 }
             });
         });

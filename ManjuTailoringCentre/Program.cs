@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Image storage service (Local disk when no keys provided, Cloudinary when keys are provided)
 builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Cookie authentication for Admin login
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
