@@ -436,5 +436,49 @@
             }
         });
     }
+
+    // Direct Web3Forms instant submission to amahendrareddy123@gmail.com
+    document.addEventListener('DOMContentLoaded', function () {
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+                }
+
+                const formData = new FormData(contactForm);
+                formData.append('access_key', '9bcec314-a3bb-4fcc-9cce-6d3478ca2785');
+                formData.append('subject', '✨ New Appointment Request from Manju Tailoring');
+                formData.append('from_name', 'Manju Ladies Tailoring Website');
+
+                try {
+                    const response = await fetch('https://api.web3forms.com/submit', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        contactForm.reset();
+                        if (window.showSiteToast) {
+                            window.showSiteToast('Thank you! Your request has been received. We will contact you soon.', true);
+                        }
+                    } else {
+                        contactForm.submit();
+                    }
+                } catch (err) {
+                    contactForm.submit();
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnHtml;
+                    }
+                }
+            });
+        }
+    });
 </script>
 }

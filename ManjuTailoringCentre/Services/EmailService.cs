@@ -22,7 +22,7 @@ namespace ManjuTailoringCentre.Services
             try
             {
                 // Method 1: Web3Forms API (Passwordless, zero SMTP setup - recommended for accounts using Google Passkeys)
-                var web3Key = _config["Web3Forms:AccessKey"] ?? _config["Web3Forms__AccessKey"];
+                var web3Key = _config["Web3Forms:AccessKey"] ?? _config["Web3Forms__AccessKey"] ?? "9bcec314-a3bb-4fcc-9cce-6d3478ca2785";
                 if (!string.IsNullOrWhiteSpace(web3Key))
                 {
                     using var httpClient = new HttpClient();

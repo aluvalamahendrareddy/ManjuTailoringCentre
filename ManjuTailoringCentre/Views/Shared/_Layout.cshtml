@@ -167,8 +167,33 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         // Smooth scroll spy for SPA top and mobile nav
+        // Dynamic toast helper for AJAX / client submissions
+        window.showSiteToast = function (message, isSuccess) {
+            let container = document.getElementById('siteToastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'siteToastContainer';
+                container.className = 'toast-container position-fixed start-50 translate-middle-x p-2';
+                container.style.cssText = 'z-index: 2050; bottom: 70px; width: max-content; max-width: 92vw;';
+                document.body.appendChild(container);
+            }
+            const toastEl = document.createElement('div');
+            toastEl.className = `toast align-items-center text-white ${isSuccess ? 'bg-success' : 'bg-danger'} border-0 rounded-pill px-3 shadow-lg`;
+            toastEl.setAttribute('role', 'alert');
+            toastEl.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <div class="toast-body fw-bold py-2 px-1 text-center" style="font-size: 0.88rem; line-height: 1.3;">
+                        <i class="bi ${isSuccess ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} me-2"></i>${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white ms-2 me-1" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            container.appendChild(toastEl);
+            new bootstrap.Toast(toastEl, { delay: 4500 }).show();
+        };
+
         document.addEventListener('DOMContentLoaded', function () {
-            // Auto show floating toast notification
+            // Auto show floating toast notification if server rendered
             const siteToast = document.getElementById('siteToast');
             if (siteToast) {
                 new bootstrap.Toast(siteToast, { delay: 4500 }).show();
