@@ -90,10 +90,13 @@ namespace ManjuTailoringCentre.Controllers
                 {
                     foreach (var cp in cloudPhotos)
                     {
+                        var cat = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse";
+                        if (cat == "Pattu Langa / Half Saree") cat = "Saree Kongu Muddillu";
+
                         _db.GalleryPhotos.Add(new GalleryPhoto
                         {
-                            Title = "Designer Wear",
-                            Category = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse",
+                            Title = cat,
+                            Category = cat,
                             ImageUrl = cp.ImageUrl,
                             CloudinaryPublicId = cp.PublicId,
                             UploadedAt = DateTime.UtcNow
@@ -107,7 +110,7 @@ namespace ManjuTailoringCentre.Controllers
             // Seed default categories if none exist yet
             if (!await _db.Categories.AnyAsync())
             {
-                var defaults = new[] { "Designer Blouse", "Normal Blouse", "Kids Frocks & Dresses", "Pattu Langa / Half Saree", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
+                var defaults = new[] { "Designer Blouse", "Normal Blouse", "Kids Frocks & Dresses", "Saree Kongu Muddillu", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
                 foreach (var d in defaults)
                 {
                     _db.Categories.Add(new CategoryItem { Name = d });

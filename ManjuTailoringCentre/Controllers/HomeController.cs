@@ -54,10 +54,13 @@ namespace ManjuTailoringCentre.Controllers
                 {
                     foreach (var cp in cloudPhotos)
                     {
+                        var cat = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse";
+                        if (cat == "Pattu Langa / Half Saree") cat = "Saree Kongu Muddillu";
+
                         _db.GalleryPhotos.Add(new GalleryPhoto
                         {
-                            Title = "Designer Wear",
-                            Category = !string.IsNullOrWhiteSpace(cp.Category) ? cp.Category : "Designer Blouse",
+                            Title = cat,
+                            Category = cat,
                             ImageUrl = cp.ImageUrl,
                             CloudinaryPublicId = cp.PublicId,
                             UploadedAt = DateTime.UtcNow
