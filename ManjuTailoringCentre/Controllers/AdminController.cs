@@ -202,10 +202,26 @@ namespace ManjuTailoringCentre.Controllers
             return RedirectToAction("Dashboard");
         }
 
+        // ─── CATEGORIES MANAGEMENT PAGE ──────────────────────────────────────
+        [AdminOnly]
+        [HttpGet]
+        public async Task<IActionResult> Categories()
+        {
+            var categories = await _db.Categories.OrderBy(c => c.Name).ToListAsync();
+            // Count photos per category
+            var counts = await _db.GalleryPhotos
+                .GroupBy(p => p.Category)
+                .Select(g => new { Category = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.Category, x => x.Count);
+
+            ViewBag.PhotoCounts = counts;
+            return View(categories);
+        }
+
         // ─── ADD NEW CATEGORY ─────────────────────────────────────────────────
         [AdminOnly]
         [HttpPost]
-        public async Task<IActionResult> AddCategory(string categoryName)
+        public async Task<IActionResult> AddCategory(string categoryName, string? returnUrl)
         {
             if (!string.IsNullOrWhiteSpace(categoryName))
             {
@@ -222,21 +238,56 @@ namespace ManjuTailoringCentre.Controllers
                     TempData["Error"] = $"Category '{cleanName}' already exists.";
                 }
             }
+            if (returnUrl == "categories") return RedirectToAction("Categories");
             return RedirectToAction("Dashboard");
+        }
+
+        // ─── RENAME CATEGORY ──────────────────────────────────────────────────
+        [AdminOnly]
+        [HttpPost]
+        public async Task<IActionResult> RenameCategory(int id, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+            {
+                TempData["Error"] = "Category name cannot be empty.";
+                return RedirectToAction("Categories");
+            }
+
+            var cat = await _db.Categories.FindAsync(id);
+            if (cat != null)
+            {
+                var oldName = cat.Name;
+                var trimmed = newName.Trim();
+                cat.Name = trimmed;
+
+                // Also update any photos tagged with the old category name so they don't break
+                var affectedPhotos = await _db.GalleryPhotos.Where(p => p.Category == oldName).ToListAsync();
+                foreach (var p in affectedPhotos)
+                {
+                    p.Category = trimmed;
+                    p.Title = trimmed;
+                }
+
+                await _db.SaveChangesAsync();
+                TempData["Success"] = $"Category renamed from '{oldName}' to '{trimmed}' (Updated {affectedPhotos.Count} photo(s)).";
+            }
+            return RedirectToAction("Categories");
         }
 
         // ─── DELETE CATEGORY ──────────────────────────────────────────────────
         [AdminOnly]
         [HttpPost]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(int id, string? returnUrl)
         {
             var cat = await _db.Categories.FindAsync(id);
             if (cat != null)
             {
+                var catName = cat.Name;
                 _db.Categories.Remove(cat);
                 await _db.SaveChangesAsync();
-                TempData["Success"] = $"Category '{cat.Name}' deleted.";
+                TempData["Success"] = $"Category '{catName}' deleted.";
             }
+            if (returnUrl == "categories") return RedirectToAction("Categories");
             return RedirectToAction("Dashboard");
         }
 

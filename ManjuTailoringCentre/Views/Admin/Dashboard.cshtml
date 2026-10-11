@@ -108,73 +108,44 @@
             </div>
         }
 
-        <!-- Upload Section -->
+        <!-- Upload Section (Compact & Intuitive) -->
         <div class="card border-0 rounded-4 shadow-sm mb-4" style="overflow: hidden;">
-            <div class="card-header py-3" style="background: var(--primary); color: white;">
-                <h5 class="mb-0"><i class="bi bi-cloud-upload me-2"></i>Upload Design Photos</h5>
+            <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background: var(--primary); color: white;">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-cloud-upload me-2"></i>Upload Design Photos</h5>
+                <a href="/admin/categories" class="btn btn-sm btn-light rounded-pill px-3 fw-bold" style="color: var(--primary);">
+                    <i class="bi bi-tags me-1"></i>Manage Categories
+                </a>
             </div>
             <div class="card-body p-4">
                 <form method="post" asp-action="Upload" enctype="multipart/form-data" id="uploadForm">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-5">
-                            <label class="form-label fw-bold">Select Category</label>
-                            <select name="category" class="form-select form-select-lg rounded-pill">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-4 col-lg-3">
+                            <label class="form-label fw-bold mb-1">1. Choose Category</label>
+                            <select name="category" class="form-select rounded-pill px-3">
                                 @foreach (var cat in categoryNames)
                                 {
                                     <option value="@cat">@cat</option>
                                 }
                             </select>
                         </div>
-                        <div class="col-md-7">
-                            <label class="form-label fw-bold">Select Photos (1 to 20 photos at once)</label>
-                            <input type="file" name="photos" id="photosInput" class="form-control form-control-lg rounded-pill"
+                        <div class="col-md-8 col-lg-6">
+                            <label class="form-label fw-bold mb-1">2. Select Photos (Up to 20 at once)</label>
+                            <input type="file" name="photos" id="photosInput" class="form-control rounded-pill px-3"
                                    accept="image/jpeg,image/jpg,image/png,image/webp" multiple required />
                         </div>
+                        <div class="col-lg-3 text-lg-end pt-lg-4">
+                            <button type="submit" class="btn btn-lg rounded-pill px-4 text-white w-100 w-lg-auto"
+                                    style="background: var(--primary); font-weight: 600;">
+                                <i class="bi bi-cloud-arrow-up-fill me-2"></i>Upload Photos
+                            </button>
+                        </div>
                         <div class="col-12" id="preview-container" style="display:none;">
+                            <hr class="my-2" />
                             <div class="d-flex flex-wrap gap-2 mt-2" id="preview-grid"></div>
                             <small class="text-muted d-block mt-2" id="preview-count"></small>
                         </div>
-                        <div class="col-12 mt-4">
-                            <button type="submit" class="btn btn-lg rounded-pill px-5 text-white"
-                                    style="background: var(--primary);">
-                                <i class="bi bi-cloud-upload me-2"></i>Upload Photos
-                            </button>
-                            <small class="text-muted ms-3">Select up to 20 photos at once · Auto saved to Cloudinary (25 GB)</small>
-                        </div>
                     </div>
                 </form>
-            </div>
-        </div>
-
-        <!-- Manage Categories Section (Add / Remove Category Dropdowns) -->
-        <div class="card border-0 rounded-4 shadow-sm mb-5" id="categorySection">
-            <div class="card-header py-3 bg-white border-bottom">
-                <h5 class="mb-0 fw-bold" style="color: var(--primary);"><i class="bi bi-tags me-2"></i>Manage Categories (Dropdowns)</h5>
-            </div>
-            <div class="card-body p-4">
-                <form method="post" asp-action="AddCategory" class="row g-2 align-items-center mb-3">
-                    <div class="col-auto">
-                        <input type="text" name="categoryName" class="form-control rounded-pill px-3" placeholder="New Category Name (e.g. Silk Lehengas)" required />
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary rounded-pill px-4 text-white" style="background: var(--primary);">
-                            <i class="bi bi-plus-circle me-1"></i>Add New Category
-                        </button>
-                    </div>
-                </form>
-
-                <div class="d-flex flex-wrap gap-2 pt-2">
-                    @foreach (var c in categoriesList)
-                    {
-                        <span class="badge bg-light text-dark border px-3 py-2 rounded-pill d-inline-flex align-items-center">
-                            <span class="me-2 fw-normal">@c.Name</span>
-                            <form method="post" asp-action="DeleteCategory" onsubmit="return confirm('Delete category \'@c.Name\'?');" class="d-inline m-0">
-                                <input type="hidden" name="id" value="@c.Id" />
-                                <button type="submit" class="btn btn-link p-0 text-danger border-0" style="font-size: 12px; line-height: 1;" title="Delete this category">✖</button>
-                            </form>
-                        </span>
-                    }
-                </div>
             </div>
         </div>
 

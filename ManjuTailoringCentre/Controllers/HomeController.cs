@@ -91,8 +91,9 @@ namespace ManjuTailoringCentre.Controllers
         {
             return new List<ReviewViewModel>
             {
-                new ReviewViewModel { Author = "Anjali", Comment = "Excellent work, Affordable prices, Trending designs, Trust worthy, Perfect in no less time!", Rating = 5 },
-                new ReviewViewModel { Author = "Prasad", Comment = "Customer friendly, Perfect fit, Turns you elegant", Rating = 5 }
+                new ReviewViewModel { Author = "Anjali Reddy", Comment = "Excellent work and affordable prices! Blouse stitching was accurate and delivered right on time for the wedding.", Rating = 5 },
+                new ReviewViewModel { Author = "Swapna Gadwal", Comment = "Very friendly and understood my exact pattern requirement. The pattu langa fit for my daughter was super cute!", Rating = 5 },
+                new ReviewViewModel { Author = "Madhavi Latha", Comment = "No multiple alterations needed. Shankaramma garu cuts and stitches with 100% precision. Truly trustworthy!", Rating = 5 }
             };
         }
     }
