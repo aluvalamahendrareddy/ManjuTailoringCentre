@@ -75,9 +75,9 @@
                             </button>
                         </div>
                     </div>
-                    <div class="gallery-caption text-center py-2">
-                        <span class="badge rounded-pill bg-light text-dark border px-3 py-1">
-                            <i class="bi bi-tag me-1" style="color: var(--primary-color);"></i>@photo.Category
+                    <div class="gallery-caption text-center">
+                        <span class="gallery-cat-pill">
+                            <i class="bi bi-tag-fill me-1" style="color: var(--primary-color);"></i>@photo.Category
                         </span>
                     </div>
                 </div>
@@ -139,6 +139,12 @@
     let currentModalImgUrl = '';
     let currentModalCategory = '';
 
+    function toAbsoluteUrl(url) {
+        if (!url) return '';
+        if (url.startsWith('http://') || url.startsWith('https://')) return url;
+        return window.location.origin + (url.startsWith('/') ? url : '/' + url);
+    }
+
     function openImageModal(imgUrl, category) {
         currentModalImgUrl = imgUrl;
         currentModalCategory = category;
@@ -146,10 +152,9 @@
         document.getElementById('modalImage').src = imgUrl;
         document.getElementById('modalCategoryBadge').textContent = category;
         
-        // Full absolute URL for sharing so recipient sees the actual photo
-        const fullImageUrl = window.location.origin + (imgUrl.startsWith('/') ? imgUrl : '/' + imgUrl);
+        const absoluteImageUrl = toAbsoluteUrl(imgUrl);
         const shopPhone = '919652848029';
-        const msg = `Hello Manju Ladies Tailoring, I like this ${category} design! Can you stitch this for me? \nPhoto: ${fullImageUrl}`;
+        const msg = `Hello Manju Ladies Tailoring, I saw this ${category} design on your website and would like to stitch something similar.\n\nDesign Photo: ${absoluteImageUrl}`;
         
         document.getElementById('modalWhatsAppBtn').href = `https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`;
         
@@ -157,29 +162,52 @@
         modal.show();
     }
 
-    // Universal Share function (like Amazon/Myntra)
+    // Universal Share function (shares actual photo with text/link like Myntra)
     async function shareDesign(imgUrl, category) {
-        const fullImageUrl = window.location.origin + (imgUrl.startsWith('/') ? imgUrl : '/' + imgUrl);
-        const shareData = {
-            title: `Manju Ladies Tailoring - ${category}`,
-            text: `Look at this beautiful ${category} design from Manju Ladies Tailoring Centre, Gadwal:`,
-            url: fullImageUrl
-        };
+        const absoluteImageUrl = toAbsoluteUrl(imgUrl);
+        const shareTitle = `Manju Ladies Tailoring - ${category}`;
+        const shareText = `Check out this beautiful ${category} design from Manju Ladies Tailoring Centre, Gadwal!\n\nView design: ${absoluteImageUrl}`;
 
+        // 1. Try Native Image Sharing (attaches the REAL photo to WhatsApp just like Myntra)
         if (navigator.share) {
             try {
-                await navigator.share(shareData);
+                // Fetch image as blob and wrap in File
+                const response = await fetch(absoluteImageUrl, { mode: 'cors' });
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const safeName = (category || 'design').replace(/[^a-zA-Z0-9]/g, '_') + '.jpg';
+                    const file = new File([blob], safeName, { type: blob.type || 'image/jpeg' });
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: shareTitle,
+                            text: shareText
+                        });
+                        return;
+                    }
+                }
             } catch (err) {
-                // User cancelled share
+                // Fetch or file-share failed/cancelled, proceed to URL share
+                if (err.name === 'AbortError') return;
             }
-        } else {
-            // Fallback for desktop browsers without Web Share API: Copy to clipboard
-            navigator.clipboard.writeText(fullImageUrl).then(() => {
-                const toastEl = document.getElementById('shareToast');
-                const toast = new bootstrap.Toast(toastEl);
-                toast.show();
-            });
+
+            // 2. Fallback: Share link with title & description
+            try {
+                await navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    url: absoluteImageUrl
+                });
+                return;
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+            }
         }
+
+        // 3. Fallback for desktop: Open WhatsApp Web with design link pre-filled
+        const waMsg = encodeURIComponent(`Look at this ${category} design from Manju Ladies Tailoring Centre:\n${absoluteImageUrl}`);
+        window.open(`https://api.whatsapp.com/send?text=${waMsg}`, '_blank');
     }
 
     function shareCurrentModalImage() {
