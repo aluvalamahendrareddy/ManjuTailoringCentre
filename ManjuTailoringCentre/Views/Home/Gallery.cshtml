@@ -4,17 +4,17 @@
     var grouped = Model.GroupBy(p => p.Category).ToList();
 }
 
-<section class="gallery-hero py-2 py-md-5" style="background: var(--bg-pink); border-radius: 0 0 35px 35px;">
-    <div class="container py-1 py-md-3 text-center fade-up">
-        <span class="text-uppercase fw-bold px-3 py-1 bg-white rounded-pill shadow-sm" style="color: var(--accent-color); font-size: 0.75rem; letter-spacing: 1px;">Our Work</span>
-        <h1 class="gallery-hero-title mt-2 mb-1 mb-md-2 fw-bold" style="color: var(--primary-color);">Our Stitching Gallery</h1>
-        <p class="lead mx-auto mb-2 mb-md-3 text-muted d-none d-md-block" style="max-width: 650px; font-size: 0.95rem;">
+<section class="gallery-hero py-1 py-md-3" style="background: var(--bg-pink); border-radius: 0 0 20px 20px;">
+    <div class="container py-1 text-center fade-up">
+        <span class="text-uppercase fw-bold px-2 py-0 bg-white rounded-pill shadow-sm" style="color: var(--accent-color); font-size: 0.7rem; letter-spacing: 0.5px;">Our Work</span>
+        <h1 class="gallery-hero-title mt-1 mb-1 fw-bold" style="color: var(--primary-color); font-size: clamp(1.3rem, 4.5vw, 2.2rem);">Our Stitching Gallery</h1>
+        <p class="lead mx-auto mb-1 text-muted d-none d-md-block" style="max-width: 650px; font-size: 0.9rem;">
             Explore our collection of blouses, gowns, kids' outfits, and custom designs — crafted with precision and care.
         </p>
     </div>
 </section>
 
-<div class="container-fluid px-2 px-md-4 px-lg-5 py-2 py-md-4">
+<div class="container-fluid px-2 px-md-4 px-lg-5 py-2">
 
     @if (!Model.Any())
     {

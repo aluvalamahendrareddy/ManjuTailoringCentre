@@ -3,30 +3,32 @@
     ViewData["Title"] = "Our Services";
 }
 
-<section class="py-5" style="background: linear-gradient(135deg, var(--primary-color), #a52a2a); border-radius: 0 0 50px 50px;">
-    <div class="container py-5 text-center text-white fade-up">
-        <h1 class="display-3 mb-3 fw-bold">Expert Tailoring Services</h1>
-        <p class="lead mx-auto mb-4 opacity-75" style="max-width: 800px;">From simple blouses to designer bridal wear, we offer comprehensive tailoring for all ladies' and kids' outfits.</p>
-        <div class="d-flex justify-content-center gap-3">
-             <a href="https://wa.me/919652848029" target="_blank" class="btn btn-light btn-lg rounded-pill shadow-lg"><i class="bi bi-whatsapp me-2"></i>Inquire Now</a>
+<section class="py-3 py-md-4" style="background: linear-gradient(135deg, var(--primary-color), #a52a2a); border-radius: 0 0 30px 30px;">
+    <div class="container py-2 py-md-3 text-center text-white fade-up">
+        <h1 class="fw-bold mb-2" style="font-size: clamp(1.5rem, 6vw, 2.8rem);">Expert Tailoring Services</h1>
+        <p class="mx-auto mb-3 opacity-75" style="max-width: 650px; font-size: 0.95rem; line-height: 1.5;">From simple blouses to designer bridal wear, we offer comprehensive tailoring for all ladies' and kids' outfits.</p>
+        <div class="d-flex justify-content-center">
+             <a href="https://wa.me/919652848029" target="_blank" class="btn btn-light px-4 py-2 rounded-pill shadow" style="font-weight: 600; font-size: 0.95rem;">
+                 <i class="bi bi-whatsapp me-2 text-success"></i>Contact Now
+             </a>
         </div>
     </div>
 </section>
 
-<div class="container py-5 mt-5">
-    <div class="row g-4 justify-content-center">
+<div class="container py-3 py-md-4 mt-1 mt-md-2">
+    <div class="row g-3 g-md-4 justify-content-center">
         @if(Model != null) {
             foreach (var service in Model)
             {
-                <div class="col-md-6 col-lg-4 mb-4 fade-up">
-                    <div class="service-card p-5 h-100 text-center" style="border-radius: 30px; border: 1px solid rgba(0,0,0,0.05); box-shadow: var(--premium-shadow);">
-                        <div class="mb-4 d-inline-block p-4 rounded-circle" style="background: var(--bg-pink); color: var(--primary-color); font-size: 2.5rem;">
+                <div class="col-md-6 col-lg-4 mb-2 mb-md-3 fade-up">
+                    <div class="service-card p-3 p-md-4 h-100 text-center d-flex flex-column" style="border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: var(--premium-shadow);">
+                        <div class="mx-auto mb-3" style="width: 64px; height: 64px; min-width: 64px; min-height: 64px; border-radius: 50%; background: var(--bg-pink); color: var(--primary-color); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 10px rgba(194, 24, 91, 0.1);">
                             <i class="bi @service.Icon"></i>
                         </div>
-                        <h4 class="mb-3 fw-bold">@service.Title</h4>
-                        <p class="text-muted mb-4 small">@service.Description</p>
-                        <div class="h5 mb-4 text-center mt-auto" style="color: var(--primary-color);">Starting from <span class="fw-bold fs-3">@service.Price</span></div>
-                        <a href="https://wa.me/919652848029?text=I'm interested in @service.Title" class="btn btn-outline-gold rounded-pill w-100">Get Quote</a>
+                        <h4 class="mb-2 fw-bold" style="font-size: 1.15rem;">@service.Title</h4>
+                        <p class="text-muted mb-3 small flex-grow-1" style="line-height: 1.45;">@service.Description</p>
+                        <div class="h6 mb-3 text-center" style="color: var(--primary-color);">Starting from <span class="fw-bold fs-4">@service.Price</span></div>
+                        <a href="https://wa.me/919652848029?text=I'm interested in @service.Title" class="btn btn-outline-gold rounded-pill w-100 py-2" style="font-weight: 600; font-size: 0.9rem;">Get Quote</a>
                     </div>
                 </div>
             }

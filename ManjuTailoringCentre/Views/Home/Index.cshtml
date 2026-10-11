@@ -5,18 +5,18 @@
     var reviews = ViewBag.Reviews as List<ReviewViewModel>;
 }
 
-<!-- Hero Section -->
-<section class="hero">
+<!-- Hero Section - compact on mobile -->
+<section class="hero" style="min-height: auto; padding: 1.5rem 0 1rem;">
     <div class="container hero-content">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-5 mb-lg-0 fade-up">
-                <h1 class="hero-title mb-4">Perfect Fit,<br><span class="text-accent" style="color: var(--accent-color);">Elegant Style</span></h1>
-                <p class="lead mb-4 text-muted">Manju Ladies Tailoring Centre - Specialists in custom designer blouses, cute kids' dresses & frocks, chudidhars, and traditional pattu langa / half sarees crafted for every special moment.</p>
-                <div class="d-flex gap-3">
-                    <a asp-action="Contact" class="btn btn-primary">Book Appointment</a>
-                    <a asp-action="Gallery" class="btn btn-outline-gold">View Designs</a>
+            <div class="col-lg-6 mb-3 mb-lg-0 fade-up">
+                <h1 class="hero-title mb-3">Perfect Fit,<br><span class="text-accent" style="color: var(--accent-color);">Elegant Style</span></h1>
+                <p class="mb-3 text-muted hero-lead" style="font-size: 0.95rem; line-height: 1.55;">Manju Ladies Tailoring Centre - Specialists in custom designer blouses, cute kids' dresses &amp; frocks, chudidhars, and traditional pattu langa / half sarees crafted for every special moment.</p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a asp-action="Contact" class="btn btn-primary btn-hero">Book Appointment</a>
+                    <a asp-action="Gallery" class="btn btn-outline-gold btn-hero">View Designs</a>
                 </div>
-                <div class="mt-5 d-flex align-items-center gap-3">
+                <div class="mt-3 d-flex align-items-center gap-2">
                     <div class="avatar-group">
                         <i class="bi bi-star-fill text-warning"></i>
                         <i class="bi bi-star-fill text-warning"></i>
@@ -27,9 +27,9 @@
                     <span class="small fw-bold">5.0 (200+ Reliable Reviews)</span>
                 </div>
             </div>
-            <div class="col-lg-6 position-relative fade-up text-center">
+            <div class="col-lg-6 position-relative fade-up text-center d-none d-lg-block">
                 <img src="/images/hero.png" class="img-fluid rounded-4 shadow-lg" alt="Tailoring Showcase">
-                <div class="position-absolute bottom-0 end-0 bg-white p-3 rounded-4 shadow m-3 d-none d-md-block" style="border-left: 5px solid var(--accent-color);">
+                <div class="position-absolute bottom-0 end-0 bg-white p-3 rounded-4 shadow m-3" style="border-left: 5px solid var(--accent-color);">
                     <p class="mb-0 fw-bold">10 AM - 8 PM</p>
                     <small class="text-muted">Monday - Saturday</small>
                 </div>
@@ -39,90 +39,89 @@
 </section>
 
 <!-- Stats / Highlights Section -->
-<section class="py-5 bg-white border-bottom">
+<section class="py-3 py-md-5 bg-white border-bottom">
     <div class="container text-center">
-        <div class="row g-4">
-            <div class="col-md-3">
-                <h2 class="fw-bold" style="color: var(--primary-color);">15+</h2>
-                <p class="text-muted">Years of Experience</p>
+        <div class="row g-2 g-md-4">
+            <div class="col-3 col-md-3">
+                <h2 class="fw-bold mb-0" style="color: var(--primary-color); font-size: clamp(1.3rem, 5vw, 2rem);">20+</h2>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Years Experience</p>
             </div>
-            <div class="col-md-3">
-                <h2 class="fw-bold" style="color: var(--primary-color);">10k+</h2>
-                <p class="text-muted">Dresses Stitched</p>
+            <div class="col-3 col-md-3">
+                <h2 class="fw-bold mb-0" style="color: var(--primary-color); font-size: clamp(1.3rem, 5vw, 2rem);">10k+</h2>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Dresses Stitched</p>
             </div>
-            <div class="col-md-3">
-                <h2 class="fw-bold" style="color: var(--primary-color);">100%</h2>
-                <p class="text-muted">Fit Guarantee</p>
+            <div class="col-3 col-md-3">
+                <h2 class="fw-bold mb-0" style="color: var(--primary-color); font-size: clamp(1.3rem, 5vw, 2rem);">100%</h2>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Fit Guarantee</p>
             </div>
-            <div class="col-md-3">
-                <h2 class="fw-bold" style="color: var(--primary-color);">Best</h2>
-                <p class="text-muted">Price in Gadwal</p>
+            <div class="col-3 col-md-3">
+                <h2 class="fw-bold mb-0" style="color: var(--primary-color); font-size: clamp(1.3rem, 5vw, 2rem);">Best</h2>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Price Gadwal</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Services Overview -->
-<section class="py-5" id="services">
-    <div class="container py-5">
-        <div class="text-center mb-5 fade-up">
+<section class="py-3 py-md-5" id="services">
+    <div class="container py-2 py-md-4">
+        <div class="text-center mb-3 mb-md-5 fade-up">
             <span class="text-uppercase fw-bold text-accent px-3 py-1 bg-light rounded-pill" style="color: var(--accent-color); font-size: 0.8rem;">Our Craftsmanship</span>
-            <h2 class="mt-3 display-5">Tailoring Services We Provide</h2>
+            <h2 class="mt-2 mt-md-3" style="font-size: clamp(1.4rem, 5vw, 2.5rem);">Tailoring Services We Provide</h2>
             <div class="mx-auto mt-2" style="width: 60px; height: 3px; background: var(--accent-color);"></div>
         </div>
-        <div class="row g-4">
+        <div class="row g-3">
             @if(services != null) {
                 @foreach (var service in services)
                 {
-                    <div class="col-md-3 fade-up">
-                        <div class="service-card">
-                            <i class="bi @service.Icon service-icon"></i>
-                            <h4>@service.Title</h4>
-                            <p class="text-muted small">@service.Description</p>
+                    <div class="col-6 col-md-3 fade-up">
+                        <div class="service-card p-3">
+                            <i class="bi @service.Icon service-icon" style="font-size: 1.8rem; margin-bottom: 0.75rem;"></i>
+                            <h5 style="font-size: 0.9rem;" class="mb-1">@service.Title</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.75rem; line-height: 1.4;">@service.Description</p>
                         </div>
                     </div>
                 }
             }
         </div>
-        <div class="text-center mt-5">
+        <div class="text-center mt-3 mt-md-5">
             <a asp-action="Services" class="btn btn-outline-dark px-4 rounded-pill">View All Services</a>
         </div>
     </div>
 </section>
 
 <!-- Featured Section - About Shankaramma -->
-<section class="py-5" style="background: #fafafa;">
-    <div class="container py-5">
-        <div class="row align-items-center g-5">
+<section class="py-3 py-md-5" style="background: #fafafa;">
+    <div class="container py-2 py-md-4">
+        <div class="row align-items-center g-3 g-md-5">
             <div class="col-lg-5 fade-up text-center">
                 <div class="d-inline-block text-center">
-                    <img src="/images/shankaramma.jpg" alt="Shankaramma - Founder & Master Tailor" class="img-fluid rounded-4 shadow-sm" style="max-height: 330px; width: auto; object-fit: cover; border: 3px solid var(--accent-color);" />
-                    <div class="mt-3">
-                        <h5 class="fw-bold mb-1" style="color: var(--primary-color); font-size: 1.25rem;">Shankaramma</h5>
-                        <p class="text-muted mb-0 small" style="font-weight: 500;">Founder & Master Designer</p>
+                    <img src="/images/shankaramma.jpg" alt="Shankaramma - Founder &amp; Master Tailor" class="img-fluid rounded-4 shadow-sm" style="max-height: 280px; width: auto; object-fit: cover; border: 3px solid var(--accent-color);" />
+                    <div class="mt-2">
+                        <h5 class="fw-bold mb-1" style="color: var(--primary-color); font-size: 1.1rem;">Shankaramma</h5>
+                        <p class="text-muted mb-0 small" style="font-weight: 500;">Founder &amp; Master Designer</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-7 fade-up">
-                <h2 class="display-6 mb-4">Dedicated to Precision and Craft</h2>
-                <p class="lead">Under the expert management of Shankaramma, Manju Ladies Tailoring Centre has become the go-to destination for ladies in Gadwal looking for the perfect fit.</p>
-                <p class="text-muted">We combine years of experience with modern trends to create blouses and dresses that aren't just clothes, but confidence boosters. Our workshop in Gandhi Chowk specializes in traditional Gadwal saree fitting and designer bridal work.</p>
-                <ul class="list-unstyled mb-4">
+                <h2 class="mb-3" style="font-size: clamp(1.3rem, 5vw, 2rem);">Dedicated to Precision and Craft</h2>
+                <p class="text-muted" style="font-size: 0.9rem;">Under the expert management of Shankaramma, Manju Ladies Tailoring Centre has become the go-to destination for ladies in Gadwal looking for the perfect fit.</p>
+                <ul class="list-unstyled mb-3" style="font-size: 0.9rem;">
                     <li><i class="bi bi-check-circle-fill text-success me-2"></i> Quality high-speed Japanese machines</li>
                     <li><i class="bi bi-check-circle-fill text-success me-2"></i> Experienced tailors and handwork artists</li>
                     <li><i class="bi bi-check-circle-fill text-success me-2"></i> Same-day alteration services available</li>
                 </ul>
-                <a asp-action="About" class="btn btn-primary px-5 rounded-pill shadow">Read Our Story</a>
+                <a asp-action="About" class="btn btn-primary px-4 rounded-pill shadow">Read Our Story</a>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Testimonials Section -->
-<section class="py-5 mb-5 bg-white">
-    <div class="container py-5">
-        <div class="text-center mb-5 fade-up">
-            <h2 class="display-6 mb-3">What Our Customers Say</h2>
+<section class="py-3 py-md-5 bg-white">
+    <div class="container py-2 py-md-4">
+        <div class="text-center mb-3 mb-md-5 fade-up">
+            <h2 class="mb-2" style="font-size: clamp(1.3rem, 5vw, 2rem);">What Our Customers Say</h2>
             <div class="mx-auto" style="width: 50px; height: 3px; background: var(--accent-color);"></div>
         </div>
         <div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -130,12 +129,12 @@
                 @if(reviews != null) {
                     for(int i=0; i < reviews.Count; i++) {
                         <div class="carousel-item @(i == 0 ? "active" : "")">
-                            <div class="review-item text-center mx-auto" style="max-width: 600px;">
-                                <i class="bi bi-quote fs-1" style="color: var(--accent-color);"></i>
-                                <p class="lead italic">"@reviews[i].Comment"</p>
-                                <div class="mt-4">
-                                    <h5 class="mb-0 fw-bold">@reviews[i].Author</h5>
-                                    <div class="text-warning small mt-2">
+                            <div class="review-item text-center mx-auto" style="max-width: 600px; padding: 1.25rem; margin: 0.5rem;">
+                                <i class="bi bi-quote fs-2" style="color: var(--accent-color);"></i>
+                                <p class="mt-1" style="font-size: 0.95rem;">"@reviews[i].Comment"</p>
+                                <div class="mt-2">
+                                    <h5 class="mb-0 fw-bold" style="font-size: 1rem;">@reviews[i].Author</h5>
+                                    <div class="text-warning small mt-1">
                                         @for(int r=0; r < reviews[i].Rating; r++) { <i class="bi bi-star-fill"></i> }
                                     </div>
                                 </div>
@@ -155,19 +154,19 @@
 </section>
 
 <!-- CTA Section -->
-<section class="py-5 mx-2 mx-md-3" style="background: linear-gradient(rgba(139,0,0,0.92), rgba(139,0,0,0.92)), url('/images/hero.png'); border-radius: 24px; background-size: cover; background-position: center; overflow: hidden;">
-    <div class="container py-4 text-center text-white">
+<section class="py-4 py-md-5 mx-2 mx-md-3 mb-2" style="background: linear-gradient(rgba(139,0,0,0.92), rgba(139,0,0,0.92)), url('/images/hero.png'); border-radius: 24px; background-size: cover; background-position: center; overflow: hidden;">
+    <div class="container py-2 py-md-3 text-center text-white">
         <div class="fade-up px-2">
-            <h2 class="display-5 fw-bold mb-3">Ready to Get Your Custom Fit?</h2>
-            <p class="lead mb-4 opacity-75 mx-auto" style="max-width: 650px;">
+            <h2 class="fw-bold mb-2" style="font-size: clamp(1.4rem, 5vw, 2.5rem);">Ready to Get Your Custom Fit?</h2>
+            <p class="mb-3 opacity-75 mx-auto" style="max-width: 650px; font-size: 0.9rem;">
                 Connect with us on WhatsApp or visit us at Gandhi Chowk for a consultation.
             </p>
-            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center">
-                <a href="https://wa.me/919652848029" target="_blank" class="btn btn-light btn-lg px-4 py-3 rounded-pill shadow w-100 w-sm-auto" style="max-width: 300px; font-weight: 600;">
-                    <i class="bi bi-whatsapp me-2 text-success fs-5 align-middle"></i>Contact via WhatsApp
+            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center align-items-center">
+                <a href="https://wa.me/919652848029" target="_blank" class="btn btn-light px-4 py-2 rounded-pill shadow w-100 w-sm-auto" style="max-width: 280px; font-weight: 600; font-size: 0.9rem;">
+                    <i class="bi bi-whatsapp me-2 text-success align-middle"></i>Contact via WhatsApp
                 </a>
-                <a asp-action="Contact" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill w-100 w-sm-auto" style="max-width: 300px; font-weight: 600;">
-                    <i class="bi bi-geo-alt-fill me-2 fs-5 align-middle"></i>Locate on Map
+                <a asp-action="Contact" class="btn btn-outline-light px-4 py-2 rounded-pill w-100 w-sm-auto" style="max-width: 280px; font-weight: 600; font-size: 0.9rem;">
+                    <i class="bi bi-geo-alt-fill me-2 align-middle"></i>Locate on Map
                 </a>
             </div>
         </div>

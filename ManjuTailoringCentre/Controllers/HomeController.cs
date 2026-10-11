@@ -142,8 +142,8 @@ namespace ManjuTailoringCentre.Controllers
             {
                 new ServiceViewModel { Title = "Designer Blouses", Description = "Custom patterns, bridal neck designs, piping & perfect fitting.", Icon = "bi-stars", Price = "₹600+", ImageUrl = "/images/blouse.webp" },
                 new ServiceViewModel { Title = "Kids Frocks & Dresses", Description = "Cute, stylish & comfortable custom outfits for baby girls & children.", Icon = "bi-person-heart", Price = "₹450+", ImageUrl = "/images/kids-dress.webp" },
-                new ServiceViewModel { Title = "Pattu Langa & Half Sarees", Description = "Traditional silk lehengas, pattu langas & festive wear.", Icon = "bi-gem", Price = "₹700+", ImageUrl = "/images/pattu-langa.webp" },
-                new ServiceViewModel { Title = "Chudidhars & Salwars", Description = "Daily wear & party wear suits with trendy cuts & perfect fit.", Icon = "bi-palette", Price = "₹400+", ImageUrl = "/images/chudidhar.webp" },
+                new ServiceViewModel { Title = "Saree Kongu Muddillu", Description = "Traditional silk lehengas, pattu langas & festive half sarees.", Icon = "bi-suit-heart", Price = "₹700+", ImageUrl = "/images/pattu-langa.webp" },
+                new ServiceViewModel { Title = "Chudidhars & Salwars", Description = "Daily wear & party wear suits with trendy cuts & perfect fit.", Icon = "bi-person-standing-dress", Price = "₹400+", ImageUrl = "/images/chudidhar.webp" },
                 new ServiceViewModel { Title = "Trendy Long Gowns", Description = "Modern festive gowns, umbrella frocks & custom designs.", Icon = "bi-flower1", Price = "₹800+", ImageUrl = "/images/gown.webp" },
                 new ServiceViewModel { Title = "Fast Alterations", Description = "Fitting, resizing & length adjustment done with care.", Icon = "bi-scissors", Price = "₹50+", ImageUrl = "/images/alterations.webp" }
             };

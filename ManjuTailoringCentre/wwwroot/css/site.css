@@ -436,24 +436,30 @@ h1, h2, h3, .navbar-brand {
     font-weight: 700;
 }
 
-.nav-item-mobile.nav-gallery-pill {
-    color: var(--primary-color);
-}
-
-.nav-item-mobile.nav-gallery-pill i {
-    font-size: 1.25rem;
-    color: var(--primary-color);
-}
-
+/* WhatsApp is green */
 .nav-item-mobile.nav-wa-mobile {
-    color: #25d366;
+    color: #25d366 !important;
 }
 .nav-item-mobile.nav-wa-mobile i {
-    font-size: 1.25rem;
-    color: #25d366;
+    font-size: 1.2rem;
+    color: #25d366 !important;
 }
 .nav-item-mobile.nav-wa-mobile span {
-    color: #25d366;
+    color: #25d366 !important;
+    font-weight: 600;
+}
+
+/* Call button is blue */
+.nav-item-mobile.nav-call-mobile {
+    color: #0d6efd !important;
+}
+.nav-item-mobile.nav-call-mobile i {
+    font-size: 1.2rem;
+    color: #0d6efd !important;
+}
+.nav-item-mobile.nav-call-mobile span {
+    color: #0d6efd !important;
+    font-weight: 600;
 }
 
 /* ── Gallery Hero Styles & Mobile Space Optimization ── */
@@ -482,30 +488,58 @@ h1, h2, h3, .navbar-brand {
         font-size: 0.95rem !important;
         border-radius: 8px !important;
     }
+    /* Sufficient clearance so Perfect Fit is never cut on initial load */
     main {
-        margin-top: 62px !important;
-        padding-bottom: 85px !important;
+        margin-top: 76px !important;
+        padding-bottom: 80px !important;
+    }
+
+    .hero {
+        min-height: auto !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
     }
 
     .hero-title {
-        font-size: 2.2rem !important;
-        line-height: 1.25 !important;
+        font-size: 2.1rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 0.75rem !important;
+    }
+
+    /* Compact action buttons on mobile */
+    .btn-hero {
+        padding: 0.5rem 1.15rem !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        border-radius: 25px !important;
+    }
+
+    /* Reduce vertical padding in cards and sections on mobile */
+    .service-card {
+        padding: 1rem 0.75rem !important;
+        border-radius: 16px !important;
+    }
+
+    .review-item {
+        padding: 1rem !important;
+        margin: 0.25rem auto !important;
+        border-radius: 16px !important;
     }
 
     /* Gallery Hero compact styling (minimal padding, no wasted space) */
     .gallery-hero {
-        border-radius: 0 0 24px 24px !important;
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.4rem !important;
+        border-radius: 0 0 18px 18px !important;
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
     }
     .gallery-hero .container {
-        padding-top: 0.2rem !important;
-        padding-bottom: 0.2rem !important;
+        padding-top: 0.15rem !important;
+        padding-bottom: 0.15rem !important;
     }
     .gallery-hero-title {
-        font-size: 1.55rem !important;
-        margin-top: 0.25rem !important;
-        margin-bottom: 0.25rem !important;
+        font-size: 1.45rem !important;
+        margin-top: 0.2rem !important;
+        margin-bottom: 0.2rem !important;
     }
     .gallery-hero-desc {
         display: none !important;
@@ -513,8 +547,8 @@ h1, h2, h3, .navbar-brand {
 
     /* Compact category filter buttons */
     .filter-btn {
-        padding: 0.25rem 0.75rem !important;
-        font-size: 0.78rem !important;
+        padding: 0.22rem 0.7rem !important;
+        font-size: 0.76rem !important;
     }
 
     /* Clean square photo cards on mobile with no extra padding */
