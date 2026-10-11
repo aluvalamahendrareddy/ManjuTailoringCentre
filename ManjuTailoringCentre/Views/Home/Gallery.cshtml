@@ -4,23 +4,17 @@
     var grouped = Model.GroupBy(p => p.Category).ToList();
 }
 
-<section class="py-5" style="background: var(--bg-pink); border-radius: 0 0 50px 50px;">
-    <div class="container py-5 text-center fade-up">
-        <span class="text-uppercase fw-bold px-3 py-1 bg-light rounded-pill" style="color: var(--accent-color); font-size: 0.8rem;">Our Work</span>
-        <h1 class="display-3 mt-3 mb-3 fw-bold" style="color: var(--primary-color);">Our Stitching Gallery</h1>
-        <p class="lead mx-auto mb-5 text-muted" style="max-width: 700px;">
-            Explore our collection of blouses, gowns, kids' outfits, and custom designs — each crafted with precision and care.
+<section class="gallery-hero py-2 py-md-5" style="background: var(--bg-pink); border-radius: 0 0 35px 35px;">
+    <div class="container py-1 py-md-3 text-center fade-up">
+        <span class="text-uppercase fw-bold px-3 py-1 bg-white rounded-pill shadow-sm" style="color: var(--accent-color); font-size: 0.75rem; letter-spacing: 1px;">Our Work</span>
+        <h1 class="gallery-hero-title mt-2 mb-1 mb-md-2 fw-bold" style="color: var(--primary-color);">Our Stitching Gallery</h1>
+        <p class="lead mx-auto mb-2 mb-md-3 text-muted d-none d-md-block" style="max-width: 650px; font-size: 0.95rem;">
+            Explore our collection of blouses, gowns, kids' outfits, and custom designs — crafted with precision and care.
         </p>
-        @if (Model.Any())
-        {
-            <span class="badge rounded-pill px-4 py-2 fs-6" style="background: var(--primary-color);">
-                <i class="bi bi-images me-2"></i>@Model.Count Designs
-            </span>
-        }
     </div>
 </section>
 
-<div class="container-fluid px-3 px-lg-5 py-4 mt-2">
+<div class="container-fluid px-2 px-md-4 px-lg-5 py-2 py-md-4">
 
     @if (!Model.Any())
     {
@@ -39,16 +33,17 @@
         <!-- Category Filter Tabs -->
         @if (grouped.Count > 1)
         {
-            <div class="text-center mb-5">
-                <div class="d-flex flex-wrap justify-content-center gap-2">
-                    <button class="btn rounded-pill px-4 filter-btn active-filter"
-                            style="background: var(--primary-color); color: white; border: none;"
+            <div class="text-center mb-3 mb-md-4">
+                <div class="d-flex flex-wrap justify-content-center gap-1 gap-md-2">
+                    <button class="btn btn-sm btn-md-normal rounded-pill px-3 px-md-4 filter-btn active-filter"
+                            style="background: var(--primary-color); color: white; border: none; font-size: 0.82rem;"
                             onclick="filterGallery('all', this)">
                         All (@Model.Count)
                     </button>
                     @foreach (var group in grouped)
                     {
-                        <button class="btn btn-outline-secondary rounded-pill px-4 filter-btn"
+                        <button class="btn btn-sm btn-md-normal btn-outline-secondary rounded-pill px-3 px-md-4 filter-btn"
+                                style="font-size: 0.82rem;"
                                 onclick="filterGallery('@group.Key', this)">
                             @group.Key (@group.Count())
                         </button>
@@ -70,12 +65,13 @@
                                 <i class="bi bi-arrows-fullscreen"></i>
                             </button>
                             <button type="button" class="overlay-btn" title="Share Design"
-                                    onclick="event.stopPropagation(); shareDesign('@photo.ImageUrl', '@photo.Category');">
+                                     onclick="event.stopPropagation(); shareDesign('@photo.ImageUrl', '@photo.Category');">
                                 <i class="bi bi-share-fill"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="gallery-caption text-center">
+                    <!-- Category shown on Web/Desktop, hidden on Mobile to maximize screen space -->
+                    <div class="gallery-caption text-center d-none d-md-block">
                         <span class="gallery-cat-pill">
                             <i class="bi bi-tag-fill me-1" style="color: var(--primary-color);"></i>@photo.Category
                         </span>
