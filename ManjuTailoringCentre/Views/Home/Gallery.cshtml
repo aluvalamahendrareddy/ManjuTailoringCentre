@@ -1,0 +1,210 @@
+@model List<ManjuTailoringCentre.Models.GalleryPhoto>
+@{
+    ViewData["Title"] = "Design Gallery";
+    var grouped = Model.GroupBy(p => p.Category).ToList();
+}
+
+<section class="py-5" style="background: var(--bg-pink); border-radius: 0 0 50px 50px;">
+    <div class="container py-5 text-center fade-up">
+        <span class="text-uppercase fw-bold px-3 py-1 bg-light rounded-pill" style="color: var(--accent-color); font-size: 0.8rem;">Our Work</span>
+        <h1 class="display-3 mt-3 mb-3 fw-bold" style="color: var(--primary-color);">Our Stitching Gallery</h1>
+        <p class="lead mx-auto mb-5 text-muted" style="max-width: 700px;">
+            Explore our collection of blouses, gowns, kids' outfits, and custom designs — each crafted with precision and care.
+        </p>
+        @if (Model.Any())
+        {
+            <span class="badge rounded-pill px-4 py-2 fs-6" style="background: var(--primary-color);">
+                <i class="bi bi-images me-2"></i>@Model.Count Designs
+            </span>
+        }
+    </div>
+</section>
+
+<div class="container-fluid px-3 px-lg-5 py-4 mt-2">
+
+    @if (!Model.Any())
+    {
+        <!-- No photos yet -->
+        <div class="text-center py-5">
+            <i class="bi bi-image" style="font-size: 5rem; color: #ddd;"></i>
+            <h4 class="mt-4 text-muted">Gallery Coming Soon!</h4>
+            <p class="text-muted">We're adding our designs. Check back soon or contact us directly via WhatsApp.</p>
+            <a href="https://wa.me/919652848029" class="btn btn-success rounded-pill px-5 mt-2">
+                <i class="bi bi-whatsapp me-2"></i>Contact via WhatsApp
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- Category Filter Tabs -->
+        @if (grouped.Count > 1)
+        {
+            <div class="text-center mb-5">
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <button class="btn rounded-pill px-4 filter-btn active-filter"
+                            style="background: var(--primary-color); color: white; border: none;"
+                            onclick="filterGallery('all', this)">
+                        All (@Model.Count)
+                    </button>
+                    @foreach (var group in grouped)
+                    {
+                        <button class="btn btn-outline-secondary rounded-pill px-4 filter-btn"
+                                onclick="filterGallery('@group.Key', this)">
+                            @group.Key (@group.Count())
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Photo Grid -->
+        <div class="gallery-grid" id="galleryGrid">
+            @foreach (var photo in Model)
+            {
+                <div class="gallery-card fade-up" data-category="@photo.Category" style="cursor: pointer;"
+                     onclick="openImageModal('@photo.ImageUrl', '@photo.Category')">
+                    <div class="gallery-img-wrap">
+                        <img src="@photo.ImageUrl" alt="@photo.Category" loading="lazy" />
+                        <div class="gallery-overlay">
+                            <button type="button" class="overlay-btn" title="View Full Design">
+                                <i class="bi bi-arrows-fullscreen"></i>
+                            </button>
+                            <button type="button" class="overlay-btn" title="Share Design"
+                                    onclick="event.stopPropagation(); shareDesign('@photo.ImageUrl', '@photo.Category');">
+                                <i class="bi bi-share-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="gallery-caption text-center py-2">
+                        <span class="badge rounded-pill bg-light text-dark border px-3 py-1">
+                            <i class="bi bi-tag me-1" style="color: var(--primary-color);"></i>@photo.Category
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Image Preview Modal (Popup in same tab with Share and WhatsApp options) -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg" style="background: rgba(20,20,20,0.95);">
+            <div class="modal-header border-0 pb-0 d-flex justify-content-between align-items-center">
+                <span id="modalCategoryBadge" class="badge rounded-pill px-3 py-2 text-white" style="background: var(--primary-color);"></span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-3">
+                <img id="modalImage" src="" alt="Full Design Preview" class="img-fluid rounded-3" style="max-height: 70vh; width: auto; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5);" />
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 justify-content-center gap-3">
+                <!-- 1. Send / Order directly to Shop WhatsApp with Photo link -->
+                <a id="modalWhatsAppBtn" href="#" target="_blank" class="btn btn-success btn-lg rounded-pill px-4 py-2" style="font-weight: 600;">
+                    <i class="bi bi-whatsapp me-2"></i>Order on WhatsApp
+                </a>
+                
+                <!-- 2. Universal Share button (like Amazon/Myntra - shares to friends, WhatsApp, Instagram, etc.) -->
+                <button type="button" class="btn btn-light btn-lg rounded-pill px-4 py-2" style="font-weight: 600; color: #222;" onclick="shareCurrentModalImage()">
+                    <i class="bi bi-share-fill me-2" style="color: var(--primary-color);"></i>Share Design
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification for copy link fallback -->
+<div class="position-fixed bottom-0 start-50 translate-middle-x p-3" style="z-index: 1080;">
+    <div id="shareToast" class="toast align-items-center text-white bg-dark border-0 rounded-pill px-3" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>Design link copied to clipboard!
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<section class="py-5 mb-5" style="background: linear-gradient(rgba(194,24,91,0.92), rgba(194,24,91,0.92)); border-radius: 40px; margin: 0 15px;">
+    <div class="container py-4 text-center text-white">
+        <h2 class="display-6 fw-bold mb-3">Like What You See?</h2>
+        <p class="lead mb-4 opacity-75">Send us your design idea on WhatsApp and we'll make it happen!</p>
+        <a href="https://wa.me/919652848029" target="_blank" class="btn btn-light btn-lg px-5 rounded-pill" style="color: var(--primary-color); font-weight: 600;">
+            <i class="bi bi-whatsapp me-2 text-success"></i>Order Your Design
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    let currentModalImgUrl = '';
+    let currentModalCategory = '';
+
+    function openImageModal(imgUrl, category) {
+        currentModalImgUrl = imgUrl;
+        currentModalCategory = category;
+
+        document.getElementById('modalImage').src = imgUrl;
+        document.getElementById('modalCategoryBadge').textContent = category;
+        
+        // Full absolute URL for sharing so recipient sees the actual photo
+        const fullImageUrl = window.location.origin + (imgUrl.startsWith('/') ? imgUrl : '/' + imgUrl);
+        const shopPhone = '919652848029';
+        const msg = `Hello Manju Ladies Tailoring, I like this ${category} design! Can you stitch this for me? \nPhoto: ${fullImageUrl}`;
+        
+        document.getElementById('modalWhatsAppBtn').href = `https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`;
+        
+        const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+        modal.show();
+    }
+
+    // Universal Share function (like Amazon/Myntra)
+    async function shareDesign(imgUrl, category) {
+        const fullImageUrl = window.location.origin + (imgUrl.startsWith('/') ? imgUrl : '/' + imgUrl);
+        const shareData = {
+            title: `Manju Ladies Tailoring - ${category}`,
+            text: `Look at this beautiful ${category} design from Manju Ladies Tailoring Centre, Gadwal:`,
+            url: fullImageUrl
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                // User cancelled share
+            }
+        } else {
+            // Fallback for desktop browsers without Web Share API: Copy to clipboard
+            navigator.clipboard.writeText(fullImageUrl).then(() => {
+                const toastEl = document.getElementById('shareToast');
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            });
+        }
+    }
+
+    function shareCurrentModalImage() {
+        shareDesign(currentModalImgUrl, currentModalCategory);
+    }
+
+    function filterGallery(category, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active-filter');
+            b.style.background = '';
+            b.style.color = '';
+            b.classList.add('btn-outline-secondary');
+        });
+        btn.classList.add('active-filter');
+        btn.classList.remove('btn-outline-secondary');
+        btn.style.background = 'var(--primary-color)';
+        btn.style.color = 'white';
+
+        document.querySelectorAll('.gallery-card').forEach(card => {
+            if (category === 'all' || card.dataset.category === category) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+}

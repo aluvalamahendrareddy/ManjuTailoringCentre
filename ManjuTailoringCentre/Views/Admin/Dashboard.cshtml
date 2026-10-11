@@ -1,0 +1,257 @@
+@model List<ManjuTailoringCentre.Models.GalleryPhoto>
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = null;
+    var categories = new[] { "Designer Blouse", "Normal Blouse", "Kids Frocks & Dresses", "Pattu Langa / Half Saree", "Chudidhar & Salwar", "Long Gowns & Frocks", "Custom Dresses", "Alterations" };
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard – Manju Tailoring</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root { 
+            --primary: #c2185b; /* Vibrant Raspberry / Rani Pink */
+            --primary-hover: #ad1457;
+            --accent: #d4af37;  /* Warm Gold */
+            --bg-light: #fff7f9;
+        }
+        body { background: var(--bg-light); font-family: 'Segoe UI', sans-serif; }
+        .sidebar { background: var(--primary); min-height: 100vh; width: 240px; position: fixed; top: 0; left: 0; z-index: 100; padding: 2rem 1rem; }
+        .sidebar .brand { color: white; font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .sidebar a { color: rgba(255,255,255,0.85); text-decoration: none; display: block; padding: 0.65rem 1rem; border-radius: 10px; margin-bottom: 0.5rem; transition: 0.2s; font-weight: 500; }
+        .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.2); color: white; }
+        .main-content { margin-left: 240px; padding: 2rem; }
+        .stat-card { background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(194,24,91,0.06); border: 1px solid rgba(194,24,91,0.08); }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.25rem; }
+        .photo-item { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .photo-item:hover img { transform: scale(1.05); }
+        .photo-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); padding: 1rem 0.75rem 0.75rem; color: white; }
+        .photo-overlay small { opacity: 0.9; font-size: 0.8rem; }
+        .delete-btn { position: absolute; top: 10px; right: 10px; background: #e53935; border: 2px solid white; color: white; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s, background 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.35); z-index: 5; opacity: 1; }
+        .delete-btn:hover { background: #b71c1c; transform: scale(1.15); }
+        .preview-thumb-wrap { position: relative; display: inline-block; margin: 4px; }
+        .preview-thumb { width: 85px; height: 85px; object-fit: cover; border-radius: 10px; border: 2px solid white; box-shadow: 0 3px 10px rgba(0,0,0,0.15); display: block; }
+        .preview-remove-btn { position: absolute; top: -8px; right: -8px; background: #e53935; border: 2px solid white; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .preview-remove-btn:hover { background: #b71c1c; transform: scale(1.2); }
+        @@media (max-width: 768px) {
+            .sidebar { width: 100%; min-height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="bi bi-scissors me-2"></i>MLTC Admin
+        </div>
+        <a href="/admin" class="active"><i class="bi bi-images me-2"></i>Gallery</a>
+        <a href="/" target="_blank"><i class="bi bi-globe me-2"></i>View Website</a>
+        <form method="post" asp-action="Logout" class="mt-auto" style="margin-top: auto !important;">
+            <button type="submit" class="btn text-white w-100 text-start ps-3" style="background:none; border:none; color: rgba(255,255,255,0.85); font-weight: 500;">
+                <i class="bi bi-box-arrow-left me-2"></i>Logout
+            </button>
+        </form>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <h3 class="fw-bold" style="color: var(--primary);">@Model.Count</h3>
+                    <p class="mb-0 text-muted">Total Photos in Gallery</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <h3 class="fw-bold" style="color: var(--primary);">@Model.Select(p => p.Category).Distinct().Count()</h3>
+                    <p class="mb-0 text-muted">Active Categories</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <h3 class="fw-bold mb-0" style="color: var(--accent);">@(ViewBag.StorageUsedMB ?? 0) MB</h3>
+                        <span class="badge bg-light text-muted border">of 5 GB Max</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" style="width: @(ViewBag.StoragePercentage ?? 0)%; background: var(--primary);"></div>
+                    </div>
+                    <small class="text-muted mt-1 d-block">Used: @(ViewBag.StoragePercentage ?? 0)% · Plenty of space left!</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4">
+                <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4">
+                <i class="bi bi-exclamation-circle me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Upload Section -->
+        <div class="card border-0 rounded-4 shadow-sm mb-5" style="overflow: hidden;">
+            <div class="card-header py-3" style="background: var(--primary); color: white;">
+                <h5 class="mb-0"><i class="bi bi-cloud-upload me-2"></i>Upload Design Photos</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" asp-action="Upload" enctype="multipart/form-data" id="uploadForm">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Select Category</label>
+                            <select name="category" class="form-select form-select-lg rounded-pill">
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat">@cat</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label fw-bold">Select Photos (1 to 20 photos at once)</label>
+                            <input type="file" name="photos" id="photosInput" class="form-control form-control-lg rounded-pill"
+                                   accept="image/jpeg,image/jpg,image/png,image/webp" multiple required />
+                        </div>
+                        <div class="col-12" id="preview-container" style="display:none;">
+                            <div class="d-flex flex-wrap gap-2 mt-2" id="preview-grid"></div>
+                            <small class="text-muted d-block mt-2" id="preview-count"></small>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-lg rounded-pill px-5 text-white"
+                                    style="background: var(--primary);">
+                                <i class="bi bi-cloud-upload me-2"></i>Upload Photos
+                            </button>
+                            <small class="text-muted ms-3">Select up to 20 photos at once · JPG, PNG, or WebP</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <h5 class="mb-3 fw-bold"><i class="bi bi-images me-2"></i>All Gallery Photos (@Model.Count)</h5>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
+                <p class="text-muted mt-3">No photos uploaded yet. Upload your first design above!</p>
+            </div>
+        }
+        else
+        {
+            <div class="photo-grid">
+                @foreach (var photo in Model)
+                {
+                    <div class="photo-item">
+                        <img src="@photo.ImageUrl" alt="@photo.Title" loading="lazy" />
+                        <div class="photo-overlay">
+                            <h6>@photo.Title</h6>
+                            <small><i class="bi bi-tag me-1"></i>@photo.Category</small>
+                        </div>
+                        <form method="post" asp-action="Delete"
+                              onsubmit="return confirm('Delete \'@photo.Title\'? This cannot be undone.')">
+                            <input type="hidden" name="id" value="@photo.Id" />
+                            <button type="submit" class="delete-btn" title="Delete photo">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Track selected files with DataTransfer so user can remove individual files with (X)
+        let dt = new DataTransfer();
+        const fileInput = document.getElementById('photosInput');
+        const container = document.getElementById('preview-container');
+        const grid = document.getElementById('preview-grid');
+        const countLabel = document.getElementById('preview-count');
+
+        fileInput.addEventListener('change', function (e) {
+            // Append newly picked files
+            const newFiles = Array.from(this.files);
+            
+            if (dt.items.length + newFiles.length > 20) {
+                alert('You can upload a maximum of 20 photos at a time.');
+                return;
+            }
+
+            newFiles.forEach(f => dt.items.add(f));
+            fileInput.files = dt.files;
+            renderPreviews();
+        });
+
+        function renderPreviews() {
+            grid.innerHTML = '';
+            const files = Array.from(dt.files);
+
+            if (files.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            countLabel.textContent = `${files.length} photo(s) selected (Click ✖ on any photo to remove)`;
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'preview-thumb-wrap';
+
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.className = 'preview-thumb';
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'preview-remove-btn';
+                    removeBtn.innerHTML = '✖';
+                    removeBtn.title = 'Remove this photo';
+                    removeBtn.onclick = function () {
+                        removeFileAtIndex(index);
+                    };
+
+                    wrap.appendChild(img);
+                    wrap.appendChild(removeBtn);
+                    grid.appendChild(wrap);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeFileAtIndex(index) {
+            const newDt = new DataTransfer();
+            const currentFiles = Array.from(dt.files);
+            currentFiles.forEach((file, i) => {
+                if (i !== index) {
+                    newDt.items.add(file);
+                }
+            });
+            dt = newDt;
+            fileInput.files = dt.files;
+            renderPreviews();
+        }
+    </script>
+</body>
+</html>
